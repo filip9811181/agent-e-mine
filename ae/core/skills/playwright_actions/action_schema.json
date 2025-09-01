@@ -1,0 +1,378 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Playwright Actions Schema",
+  "description": "JSON schema for defining Playwright automation actions",
+  "type": "object",
+  "definitions": {
+    "selector": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["attributeValueSelector", "tagContainsSelector", "xpathSelector"],
+          "description": "The type of selector to use"
+        },
+        "attribute": {
+          "type": "string",
+          "enum": ["id", "class", "name"],
+          "description": "The attribute used for selection (only for attributeValueSelector)"
+        },
+        "value": {
+          "type": "string",
+          "description": "The selector value based on the type"
+        }
+      },
+      "required": ["type", "value"],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "attributeValueSelector" } }
+          },
+          "then": {
+            "required": ["attribute"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "clickAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "click"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        },
+        "x": {
+          "type": "integer",
+          "description": "X-coordinate of the click position"
+        },
+        "y": {
+          "type": "integer",
+          "description": "Y-coordinate of the click position"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "doubleClickAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "doubleClick"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "navigateAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "navigate"
+        },
+        "selector": {
+          "type": "null"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "The target URL to navigate to"
+        },
+        "go_back": {
+          "type": "boolean",
+          "description": "Set to true to navigate back in history"
+        },
+        "go_forward": {
+          "type": "boolean",
+          "description": "Set to true to navigate forward in history"
+        }
+      },
+      "required": ["type", "selector"],
+      "anyOf": [
+        { "required": ["url"] },
+        { "required": ["go_back"] },
+        { "required": ["go_forward"] }
+      ],
+      "not": {
+        "allOf": [
+          { "required": ["go_back"] },
+          { "required": ["go_forward"] }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "typeAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "type"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        },
+        "text": {
+          "type": "string",
+          "description": "The text to be typed into the element"
+        }
+      },
+      "required": ["type", "text"],
+      "additionalProperties": false
+    },
+    "selectAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "select"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "The option value to be selected"
+        }
+      },
+      "required": ["type", "value"],
+      "additionalProperties": false
+    },
+    "hoverAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "hover"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "waitAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "wait"
+        },
+        "selector": {
+          "type": "null"
+        },
+        "time_seconds": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 3600,
+          "description": "Duration to wait, in seconds"
+        }
+      },
+      "required": ["type", "selector"],
+      "additionalProperties": false
+    },
+    "scrollAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "scroll"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "Distance to scroll or a text value to scroll to"
+        },
+        "up": {
+          "type": "boolean",
+          "description": "Set to true to scroll up"
+        },
+        "down": {
+          "type": "boolean",
+          "description": "Set to true to scroll down"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "submitAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "submit"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ],
+          "description": "Must explicitly reference the submit button if available"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "dragAndDropAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "dragAndDrop"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        },
+        "source_selector": {
+          "$ref": "#/definitions/selector",
+          "description": "Selector for the element being dragged"
+        },
+        "target_selector": {
+          "$ref": "#/definitions/selector",
+          "description": "Selector for the element to drop onto"
+        }
+      },
+      "required": ["type", "source_selector", "target_selector"],
+      "additionalProperties": false
+    },
+    "screenshotAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "screenshot"
+        },
+        "selector": {
+          "type": "null"
+        },
+        "file_path": {
+          "type": "string",
+          "description": "The file path where the screenshot should be saved"
+        }
+      },
+      "required": ["type", "selector", "file_path"],
+      "additionalProperties": false
+    },
+    "getDropDownOptionsAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "getDropDownOptions"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "selectDropDownOptionAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "selectDropDownOption"
+        },
+        "selector": {
+          "oneOf": [
+            { "$ref": "#/definitions/selector" },
+            { "type": "null" }
+          ]
+        },
+        "text": {
+          "type": "string",
+          "description": "The visible text of the option to select"
+        }
+      },
+      "required": ["type", "text"],
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/definitions/clickAction" },
+    { "$ref": "#/definitions/doubleClickAction" },
+    { "$ref": "#/definitions/navigateAction" },
+    { "$ref": "#/definitions/typeAction" },
+    { "$ref": "#/definitions/selectAction" },
+    { "$ref": "#/definitions/hoverAction" },
+    { "$ref": "#/definitions/waitAction" },
+    { "$ref": "#/definitions/scrollAction" },
+    { "$ref": "#/definitions/submitAction" },
+    { "$ref": "#/definitions/dragAndDropAction" },
+    { "$ref": "#/definitions/screenshotAction" },
+    { "$ref": "#/definitions/getDropDownOptionsAction" },
+    { "$ref": "#/definitions/selectDropDownOptionAction" }
+  ],
+  "examples": [
+    {
+      "type": "click",
+      "selector": {
+        "type": "attributeValueSelector",
+        "attribute": "id",
+        "value": "submit-button"
+      }
+    },
+    {
+      "type": "navigate",
+      "selector": null,
+      "url": "https://example.com"
+    },
+    {
+      "type": "type",
+      "selector": {
+        "type": "attributeValueSelector",
+        "attribute": "name",
+        "value": "username"
+      },
+      "text": "test_user"
+    },
+    {
+      "type": "dragAndDrop",
+      "source_selector": {
+        "type": "attributeValueSelector",
+        "attribute": "id",
+        "value": "draggable-item"
+      },
+      "target_selector": {
+        "type": "attributeValueSelector",
+        "attribute": "id",
+        "value": "drop-zone"
+      }
+    }
+  ]
+}

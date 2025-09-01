@@ -1,0 +1,512 @@
+{
+  "action_examples": {
+    "click_actions": [
+      {
+        "type": "click",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "submit-button"
+        },
+        "description": "Click on element with ID 'submit-button'"
+      },
+      {
+        "type": "click",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "class",
+          "value": "btn-primary"
+        },
+        "description": "Click on element with class 'btn-primary'"
+      },
+      {
+        "type": "click",
+        "selector": {
+          "type": "tagContainsSelector",
+          "value": "Submit"
+        },
+        "description": "Click on element containing text 'Submit'"
+      },
+      {
+        "type": "click",
+        "selector": {
+          "type": "xpathSelector",
+          "value": "//button[@type='submit']"
+        },
+        "description": "Click on submit button using XPath"
+      },
+      {
+        "type": "click",
+        "x": 100,
+        "y": 200,
+        "description": "Click at coordinates (100, 200)"
+      }
+    ],
+    
+    "double_click_actions": [
+      {
+        "type": "doubleClick",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "editable-text"
+        },
+        "description": "Double-click on editable text element"
+      },
+      {
+        "type": "doubleClick",
+        "selector": {
+          "type": "tagContainsSelector",
+          "value": "Double click me"
+        },
+        "description": "Double-click on element containing text 'Double click me'"
+      }
+    ],
+    
+    "navigate_actions": [
+      {
+        "type": "navigate",
+        "selector": null,
+        "url": "https://www.google.com",
+        "description": "Navigate to Google homepage"
+      },
+      {
+        "type": "navigate",
+        "selector": null,
+        "go_back": true,
+        "description": "Go back to previous page in browser history"
+      },
+      {
+        "type": "navigate",
+        "selector": null,
+        "go_forward": true,
+        "description": "Go forward to next page in browser history"
+      }
+    ],
+    
+    "type_actions": [
+      {
+        "type": "type",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "name",
+          "value": "username"
+        },
+        "text": "test_user",
+        "description": "Type 'test_user' into username field"
+      },
+      {
+        "type": "type",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "search-input"
+        },
+        "text": "Playwright automation",
+        "description": "Type search query into search input"
+      },
+      {
+        "type": "type",
+        "selector": {
+          "type": "xpathSelector",
+          "value": "//input[@placeholder='Enter your message']"
+        },
+        "text": "Hello, World!",
+        "description": "Type message using XPath selector"
+      }
+    ],
+    
+    "select_actions": [
+      {
+        "type": "select",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "name",
+          "value": "country"
+        },
+        "value": "US",
+        "description": "Select 'US' from country dropdown"
+      },
+      {
+        "type": "select",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "language-select"
+        },
+        "value": "en",
+        "description": "Select English language option"
+      }
+    ],
+    
+    "hover_actions": [
+      {
+        "type": "hover",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "class",
+          "value": "menu-item"
+        },
+        "description": "Hover over menu item to reveal submenu"
+      },
+      {
+        "type": "hover",
+        "selector": {
+          "type": "tagContainsSelector",
+          "value": "Hover me"
+        },
+        "description": "Hover over element containing 'Hover me' text"
+      }
+    ],
+    
+    "wait_actions": [
+      {
+        "type": "wait",
+        "selector": null,
+        "time_seconds": 2.5,
+        "description": "Wait for 2.5 seconds"
+      },
+      {
+        "type": "wait",
+        "selector": null,
+        "time_seconds": 10,
+        "description": "Wait for 10 seconds for page to load"
+      }
+    ],
+    
+    "scroll_actions": [
+      {
+        "type": "scroll",
+        "selector": null,
+        "down": true,
+        "description": "Scroll down the page"
+      },
+      {
+        "type": "scroll",
+        "selector": null,
+        "up": true,
+        "description": "Scroll up the page"
+      },
+      {
+        "type": "scroll",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "chat-container"
+        },
+        "value": "Latest message",
+        "description": "Scroll chat container to 'Latest message'"
+      }
+    ],
+    
+    "submit_actions": [
+      {
+        "type": "submit",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "login-form"
+        },
+        "description": "Submit login form by ID"
+      },
+      {
+        "type": "submit",
+        "selector": {
+          "type": "xpathSelector",
+          "value": "//form[@action='/submit']"
+        },
+        "description": "Submit form using XPath"
+      },
+      {
+        "type": "submit",
+        "selector": null,
+        "description": "Submit form without specific selector (presses Enter)"
+      }
+    ],
+    
+    "drag_and_drop_actions": [
+      {
+        "type": "dragAndDrop",
+        "source_selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "draggable-item"
+        },
+        "target_selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "drop-zone"
+        },
+        "description": "Drag item to drop zone"
+      },
+      {
+        "type": "dragAndDrop",
+        "source_selector": {
+          "type": "tagContainsSelector",
+          "value": "Drag me"
+        },
+        "target_selector": {
+          "type": "tagContainsSelector",
+          "value": "Drop here"
+        },
+        "description": "Drag element with 'Drag me' text to 'Drop here' area"
+      }
+    ],
+    
+    "screenshot_actions": [
+      {
+        "type": "screenshot",
+        "selector": null,
+        "file_path": "screenshots/page_screenshot.png",
+        "description": "Take screenshot of entire page"
+      },
+      {
+        "type": "screenshot",
+        "selector": null,
+        "file_path": "screenshots/error_screenshot.png",
+        "description": "Take screenshot for error documentation"
+      }
+    ],
+    
+    "dropdown_actions": [
+      {
+        "type": "getDropDownOptions",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "name",
+          "value": "category"
+        },
+        "description": "Get all options from category dropdown"
+      },
+      {
+        "type": "selectDropDownOption",
+        "selector": {
+          "type": "attributeValueSelector",
+          "attribute": "id",
+          "value": "product-select"
+        },
+        "text": "Premium Plan",
+        "description": "Select 'Premium Plan' option from dropdown"
+      }
+    ]
+  },
+  
+  "complex_workflows": [
+    {
+      "name": "User Registration Workflow",
+      "description": "Complete user registration process",
+      "actions": [
+        {
+          "type": "navigate",
+          "selector": null,
+          "url": "https://example.com/register",
+          "description": "Navigate to registration page"
+        },
+        {
+          "type": "wait",
+          "selector": null,
+          "time_seconds": 2,
+          "description": "Wait for page to load"
+        },
+        {
+          "type": "type",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "name",
+            "value": "username"
+          },
+          "text": "newuser123",
+          "description": "Enter username"
+        },
+        {
+          "type": "type",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "name",
+            "value": "email"
+          },
+          "text": "user@example.com",
+          "description": "Enter email"
+        },
+        {
+          "type": "type",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "name",
+            "value": "password"
+          },
+          "text": "securepassword123",
+          "description": "Enter password"
+        },
+        {
+          "type": "select",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "name",
+            "value": "country"
+          },
+          "value": "US",
+          "description": "Select country"
+        },
+        {
+          "type": "click",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "id",
+            "value": "submit-button"
+          },
+          "description": "Submit registration form"
+        },
+        {
+          "type": "wait",
+          "selector": null,
+          "time_seconds": 3,
+          "description": "Wait for form submission"
+        },
+        {
+          "type": "screenshot",
+          "selector": null,
+          "file_path": "screenshots/registration_success.png",
+          "description": "Capture success page"
+        }
+      ]
+    },
+    
+    {
+      "name": "E-commerce Shopping Workflow",
+      "description": "Complete shopping cart workflow",
+      "actions": [
+        {
+          "type": "navigate",
+          "selector": null,
+          "url": "https://shop.example.com",
+          "description": "Navigate to online shop"
+        },
+        {
+          "type": "type",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "id",
+            "value": "search-input"
+          },
+          "text": "wireless headphones",
+          "description": "Search for wireless headphones"
+        },
+        {
+          "type": "click",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "id",
+            "value": "search-button"
+          },
+          "description": "Click search button"
+        },
+        {
+          "type": "wait",
+          "selector": null,
+          "time_seconds": 2,
+          "description": "Wait for search results"
+        },
+        {
+          "type": "click",
+          "selector": {
+            "type": "xpathSelector",
+            "value": "//div[@class='product-item'][1]//button[contains(text(), 'Add to Cart')]"
+          },
+          "description": "Add first product to cart"
+        },
+        {
+          "type": "wait",
+          "selector": null,
+          "time_seconds": 1,
+          "description": "Wait for cart update"
+        },
+        {
+          "type": "click",
+          "selector": {
+            "type": "attributeValueSelector",
+            "attribute": "class",
+            "value": "cart-icon"
+          },
+          "description": "Open shopping cart"
+        },
+        {
+          "type": "click",
+          "selector": {
+            "type": "tagContainsSelector",
+            "value": "Checkout"
+          },
+          "description": "Proceed to checkout"
+        }
+      ]
+    }
+  ],
+  
+  "selector_examples": {
+    "attributeValueSelector": {
+      "id_example": {
+        "type": "attributeValueSelector",
+        "attribute": "id",
+        "value": "submit-button",
+        "playwright_selector": "#submit-button"
+      },
+      "class_example": {
+        "type": "attributeValueSelector",
+        "attribute": "class",
+        "value": "btn-primary",
+        "playwright_selector": ".btn-primary"
+      },
+      "name_example": {
+        "type": "attributeValueSelector",
+        "attribute": "name",
+        "value": "username",
+        "playwright_selector": "[name='username']"
+      }
+    },
+    "tagContainsSelector": {
+      "text_example": {
+        "type": "tagContainsSelector",
+        "value": "Submit",
+        "playwright_selector": "text=Submit"
+      }
+    },
+    "xpathSelector": {
+      "xpath_example": {
+        "type": "xpathSelector",
+        "value": "//button[@type='submit']",
+        "playwright_selector": "//button[@type='submit']"
+      }
+    }
+  },
+  
+  "best_practices": [
+    "Always include a description for better action documentation",
+    "Use appropriate selector types for different scenarios",
+    "Prefer attributeValueSelector for stable elements (id, name)",
+    "Use tagContainsSelector for text-based selection",
+    "Use xpathSelector for complex element relationships",
+    "Set appropriate wait times for page interactions",
+    "Handle errors gracefully with proper validation",
+    "Use meaningful file paths for screenshots",
+    "Group related actions into workflows",
+    "Test selectors before using them in automation"
+  ],
+  
+  "error_handling": {
+    "common_errors": [
+      "Element not found - selector may be invalid or element not loaded",
+      "Timeout errors - increase wait times or check page state",
+      "Invalid selector format - ensure proper JSON structure",
+      "Missing required fields - check action type requirements",
+      "Conflicting parameters - avoid setting both go_back and go_forward"
+    ],
+    "validation_rules": [
+      "All actions must have a 'type' field",
+      "Selectors must have 'type' and 'value' fields",
+      "attributeValueSelector requires 'attribute' field",
+      "Navigate actions cannot have both go_back and go_forward true",
+      "Wait actions must have selector set to null",
+      "Screenshot actions must have selector set to null"
+    ]
+  }
+}
