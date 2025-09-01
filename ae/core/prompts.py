@@ -158,6 +158,11 @@ Some basic information about the user: $basic_user_information""",
    "EXTRACT_TEXT_FROM_PDF_PROMPT": """Extracts text from a PDF file hosted at the given URL.""",
 
 
+   "DRAG_AND_DROP_PROMPT": """Drags an element identified by its mmid selector and drops it onto another element identified by its mmid selector.
+   Provide two selectors: source and target. When available, always use the mmid-based selector pattern (e.g., [mmid='123']).
+   Returns Success if the drag-and-drop was completed or an explanatory error if it could not be performed. If this action reveals new UI (like items moving or lists updating), you should retrieve the all_fields DOM to continue interaction.""",
+
+
    "BROWSER_AGENT_NO_SKILLS_PROMPT": """You are an autonomous agent tasked with performing web navigation on a Playwright instance, including logging into websites and executing other web-based actions.
    You will receive user commands, formulate a plan and then write the PYTHON code that is needed for the task to be completed.
    It is possible that the code you are writing is for one step at a time in the plan. This will ensure proper execution of the task.
