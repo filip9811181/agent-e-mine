@@ -163,6 +163,11 @@ Some basic information about the user: $basic_user_information""",
    Returns Success if the drag-and-drop was completed or an explanatory error if it could not be performed. If this action reveals new UI (like items moving or lists updating), you should retrieve the all_fields DOM to continue interaction.""",
 
 
+   "SUBMIT_FORM_PROMPT": """Submits a form element identified by its mmid selector. This skill can submit forms by either clicking a submit button within the form or by triggering the form's submit event directly.
+   Provide the selector for either the form element itself or a submit button within the form. When available, always use the mmid-based selector pattern (e.g., [mmid='123']).
+   Returns Success if the form was submitted successfully or an explanatory error if submission failed. After form submission, you should retrieve the DOM to see the results or navigate to the next page.""",
+
+
    "BROWSER_AGENT_NO_SKILLS_PROMPT": """You are an autonomous agent tasked with performing web navigation on a Playwright instance, including logging into websites and executing other web-based actions.
    You will receive user commands, formulate a plan and then write the PYTHON code that is needed for the task to be completed.
    It is possible that the code you are writing is for one step at a time in the plan. This will ensure proper execution of the task.
