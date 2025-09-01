@@ -15,15 +15,15 @@ from ae.utils.ui_messagetype import MessageType
 
 
 async def submit_form(
-    selector: Annotated[str, "The mmid-based query selector string to identify either the form element or a submit button within the form (e.g. [mmid='114']). When \"mmid\" attribute is present, use it for the query selector."],
+    selector: Annotated[str, "The selector string to identify either the form element or a submit button within the form. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)."],
     wait_before_execution: Annotated[float, "Optional wait time in seconds before executing the form submission logic.", float] = 0.0
 ) -> Annotated[str, "A message indicating success or failure of the form submission."]:
     """
     Submits a form by either clicking a submit button or directly triggering the form's submit event.
-    Works with form elements or submit buttons identified by their mmid selector.
+    Works with form elements or submit buttons identified by their selector.
     
     Parameters:
-    - selector: The query selector string to identify either the form or submit button element.
+    - selector: The selector string to identify either the form or submit button element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
     - wait_before_execution: Optional wait time in seconds before executing the submission logic.
     
     Returns:
@@ -67,7 +67,7 @@ async def do_submit_form(page: Page, selector: str, wait_before_execution: float
 
     Parameters:
     - page: The Playwright page instance.
-    - selector: The query selector string to identify the form or submit button element.
+    - selector: The selector string to identify the form or submit button element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
     - wait_before_execution: Optional wait time in seconds before executing the submission logic.
 
     Returns:
@@ -153,7 +153,7 @@ async def submit_form_element(page: Page, selector: str, form_element: ElementHa
     
     Parameters:
     - page: The Playwright page instance.
-    - selector: The query selector string of the form element.
+    - selector: The selector string of the form element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
     - form_element: The form ElementHandle.
     
     Returns:
@@ -192,7 +192,7 @@ async def perform_submit_button_click(page: Page, selector: str) -> str:
     
     Parameters:
     - page: The Playwright page instance.
-    - selector: The query selector string of the submit button.
+    - selector: The selector string of the submit button. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
     
     Returns:
     - Success message string.

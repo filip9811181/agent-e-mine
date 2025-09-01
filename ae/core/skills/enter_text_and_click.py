@@ -11,18 +11,18 @@ from ae.utils.ui_messagetype import MessageType
 
 
 async def enter_text_and_click(
-    text_selector: Annotated[str, "The properly formatted DOM selector query, for example [mmid='1234'], where the text will be entered. Use mmid attribute."],
+    text_selector: Annotated[str, "The properly formatted DOM selector query, for example xpath, attribute selector, or text-based selector (tagContainsSelector), where the text will be entered."],
     text_to_enter: Annotated[str, "The text that will be entered into the element specified by text_selector."],
-    click_selector: Annotated[str, "The properly formatted DOM selector query, for example [mmid='1234'], for the element that will be clicked after text entry."],
+    click_selector: Annotated[str, "The properly formatted DOM selector query, for example xpath, attribute selector, or text-based selector (tagContainsSelector), for the element that will be clicked after text entry."],
     wait_before_click_execution: Annotated[float, "Optional wait time in seconds before executing the click.", float] = 0.0
 ) -> Annotated[str, "A message indicating success or failure of the text entry and click."]:
     """
     Enters text into an element and then clicks on another element.
 
     Parameters:
-    - text_selector: The selector for the element to enter text into. It should be a properly formatted DOM selector query, for example [mmid='1234'], where the text will be entered. Use the mmid attribute.
+    - text_selector: The selector for the element to enter text into. It should be a properly formatted DOM selector query, for example xpath, attribute selector, or text-based selector (tagContainsSelector), where the text will be entered.
     - text_to_enter: The text to enter into the element specified by text_selector.
-    - click_selector: The selector for the element to click. It should be a properly formatted DOM selector query, for example [mmid='1234'].
+    - click_selector: The selector for the element to click. It should be a properly formatted DOM selector query, for example xpath, attribute selector, or text-based selector (tagContainsSelector).
     - wait_before_click_execution: Optional wait time in seconds before executing the click action. Default is 0.0.
 
     Returns:
@@ -33,7 +33,7 @@ async def enter_text_and_click(
 
     Example usage:
     ```
-    await enter_text_and_click("[mmid='1234']", "Hello, World!", "[mmid='5678']", wait_before_click_execution=1.5)
+    await enter_text_and_click("//input[@name='username']", "Hello, World!", "//button[@type='submit']", wait_before_click_execution=1.5)
     ```
     """
     logger.info(f"Entering text '{text_to_enter}' into element with selector '{text_selector}' and then clicking element with selector '{click_selector}'.")

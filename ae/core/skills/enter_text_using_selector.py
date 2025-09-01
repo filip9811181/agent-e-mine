@@ -22,7 +22,7 @@ class EnterTextEntry:
     Represents an entry for text input.
 
     Attributes:
-        query_selector (str): A valid DOM selector query. Use the mmid attribute.
+        query_selector (str): A valid DOM selector query. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
         text (str): The text to enter in the element identified by the query_selector.
     """
 
@@ -81,7 +81,7 @@ async def custom_fill_element(page: Page, selector: str, text_to_enter: str):
         logger.error(f"Error in custom_fill_element, Selector: {selector}, Text: {text_to_enter}. Error: {str(e)}")
         raise
 
-async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'query_selector' (DOM selector query using mmid attribute e.g. [mmid='114']) and 'text' (text to enter on the element)."]) -> Annotated[str, "Explanation of the outcome of this operation."]:
+async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'query_selector' (DOM selector query using Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)) and 'text' (text to enter on the element)."]) -> Annotated[str, "Explanation of the outcome of this operation."]:
     """
     Enters text into a DOM element identified by a CSS selector.
 
@@ -90,7 +90,7 @@ async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'quer
     The function supports both direct setting of the 'value' property and simulating keyboard typing.
 
     Args:
-        entry (EnterTextEntry): An object containing 'query_selector' (DOM selector query using mmid attribute)
+        entry (EnterTextEntry): An object containing 'query_selector' (DOM selector query using Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector))
                                 and 'text' (text to enter on the element).
 
     Returns:

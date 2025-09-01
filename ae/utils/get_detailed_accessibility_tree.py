@@ -505,7 +505,6 @@ async def do_get_accessibility_info(page: Page, only_input_fields: bool = False)
     Returns:
         dict[str, Any] or None: The enhanced accessibility tree as a dictionary, or None if an error occurred.
     """
-    await __inject_attributes(page)
     accessibility_tree: dict[str, Any] = await page.accessibility.snapshot(interesting_only=True)  # type: ignore
 
     with open(os.path.join(SOURCE_LOG_FOLDER_PATH, 'json_accessibility_dom.json'), 'w',  encoding='utf-8') as f:

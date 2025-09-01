@@ -62,8 +62,8 @@ Some basic information about the user: $basic_user_information""",
 
    "BROWSER_AGENT_PROMPT": """You will perform web navigation tasks, which may include logging into websites and interacting with any web content using the functions made available to you.
    Use the provided DOM representation for element location or text summarization.
-   Interact with pages using only the "mmid" attribute in DOM elements.
-   You must extract mmid value from the fetched DOM, do not conjure it up.
+   Interact with pages using Playwright's native selectors: xpath, attribute selectors, or text-based selectors.
+   You must extract selector values from the fetched DOM, do not conjure them up.
    Execute function sequentially to avoid navigation timing issues. Once a task is completed, confirm completion with ##TERMINATE TASK##.
    The given actions are NOT parallelizable. They are intended for sequential execution.
    If you need to call multiple functions in a task step, call one function at a time. Wait for the function's response before invoking the next function. This is important to avoid collision.
@@ -76,7 +76,6 @@ Some basic information about the user: $basic_user_information""",
    Once the task is completed or cannot be completed, return a short summary of the actions you performed to accomplish the task, and what worked and what did not. This should be followed by ##TERMINATE TASK##. Your reply will not contain any other information.
    Additionally, If task requires an answer, you will also provide a short and precise answer followed by ##TERMINATE TASK##.
    Ensure that user questions are answered from the DOM and not from memory or assumptions. To answer a question about textual information on the page, prefer to use text_only DOM type. To answer a question about interactive elements, use all_fields DOM type.
-   Do not provide any mmid values in your response.
    Important: If you encounter an issues or is unsure how to proceed, simply ##TERMINATE TASK## and provide a detailed summary of the exact issue encountered.
    Do not repeat the same action multiple times if it fails. Instead, if something did not work after a few attempts, terminate the task.""",
 
@@ -101,16 +100,15 @@ Some basic information about the user: $basic_user_information""",
 
 
    "GET_DOM_WITHOUT_CONTENT_TYPE_PROMPT": """Retrieves the DOM of the current web browser page.
-   Each DOM element will have an \"mmid\" attribute injected for ease of DOM interaction.
-   Returns a minified representation of the HTML DOM where each HTML DOM Element has an attribute called \"mmid\" for ease of DOM query selection. When \"mmid\" attribute is available, use it for DOM query selectors.""",
+   Returns a minified representation of the HTML DOM for query selection using Playwright's native selectors: xpath, attribute selectors, or text-based selectors.""",
 
 
    # This one below had all three content types including input_fields
    "GET_DOM_WITH_CONTENT_TYPE_PROMPT": """Retrieves the DOM of the current web site based on the given content type.
    The DOM representation returned contains items ordered in the same way they appear on the page. Keep this in mind when executing user requests that contain ordinals or numbered items.
    text_only - returns plain text representing all the text in the web site. Use this for any information retrieval task. This will contain the most complete textual information.
-   input_fields - returns a JSON string containing a list of objects representing text input html elements with mmid attribute. Use this strictly for interaction purposes with text input fields.
-   all_fields - returns a JSON string containing a list of objects representing all interactive elements and their attributes with mmid attribute. Use this strictly to identify and interact with any type of elements on page.
+   input_fields - returns a JSON string containing a list of objects representing text input html elements with their attributes. Use this strictly for interaction purposes with text input fields.
+   all_fields - returns a JSON string containing a list of objects representing all interactive elements and their attributes. Use this strictly to identify and interact with any type of elements on page.
    If information is not available in one content type, you must try another content_type.""",
 
 
@@ -118,7 +116,7 @@ Some basic information about the user: $basic_user_information""",
    The DOM representation returned contains items ordered in the same way they appear on the page. Keep this in mind when executing user requests that contain ordinals or numbered items.""",
 
 
-   "CLICK_PROMPT": """Executes a click action on the element matching the given mmid attribute value. It is best to use mmid attribute as the selector.
+   "CLICK_PROMPT": """Executes a click action on the element matching the given selector. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors.
    Returns Success if click was successful or appropriate error message if the element could not be clicked.""",
 
 
@@ -129,14 +127,14 @@ Some basic information about the user: $basic_user_information""",
    "GET_URL_PROMPT": """Get the full URL of the current web page/site. If the user command seems to imply an action that would be suitable for an already open website in their browser, use this to fetch current website URL.""",
 
 
-   "ENTER_TEXT_PROMPT": """Single enter given text in the DOM element matching the given mmid attribute value. This will only enter the text and not press enter or anything else.
+   "ENTER_TEXT_PROMPT": """Single enter given text in the DOM element matching the given selector. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors. This will only enter the text and not press enter or anything else.
    Returns Success if text entry was successful or appropriate error message if text could not be entered.""",
 
 
    "CLICK_BY_TEXT_PROMPT": """Executes a click action on the element matching the text. If multiple text matches are found, it will click on all of them. Use this as last resort when all else fails.""",
 
    "BULK_ENTER_TEXT_PROMPT": """Bulk enter text in multiple DOM fields. To be used when there are multiple fields to be filled on the same page.
-   Enters text in the DOM elements matching the given mmid attribute value.
+   Enters text in the DOM elements matching the given selectors. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors.
    The input will receive a list of objects containing the DOM query selector and the text to enter.
    This will only enter the text and not press enter or anything else.
    Returns each selector and the result for attempting to enter text.""",
@@ -148,7 +146,7 @@ Some basic information about the user: $basic_user_information""",
 
    "ADD_TO_MEMORY_PROMPT": """"Save any information that you may need later in this term memory. This could be useful for saving things to do, saving information for personalisation, or even saving information you may need in future for efficiency purposes E.g. Remember to call John at 5pm, This user likes Tesla company and considered buying shares, The user enrollment form is available in <url> etc.""",
 
-   "HOVER_PROMPT": """Hover on a element with the given mmid attribute value. Hovering on an element can reveal additional information such as a tooltip or trigger a dropdown menu with different navigation options.""",
+   "HOVER_PROMPT": """Hover on a element with the given selector. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors. Hovering on an element can reveal additional information such as a tooltip or trigger a dropdown menu with different navigation options.""",
    "GET_MEMORY_PROMPT": """Retrieve all the information previously stored in the memory""",
 
 
@@ -158,13 +156,13 @@ Some basic information about the user: $basic_user_information""",
    "EXTRACT_TEXT_FROM_PDF_PROMPT": """Extracts text from a PDF file hosted at the given URL.""",
 
 
-   "DRAG_AND_DROP_PROMPT": """Drags an element identified by its mmid selector and drops it onto another element identified by its mmid selector.
-   Provide two selectors: source and target. When available, always use the mmid-based selector pattern (e.g., [mmid='123']).
+   "DRAG_AND_DROP_PROMPT": """Drags an element identified by its selector and drops it onto another element identified by its selector.
+   Provide two selectors: source and target. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors.
    Returns Success if the drag-and-drop was completed or an explanatory error if it could not be performed. If this action reveals new UI (like items moving or lists updating), you should retrieve the all_fields DOM to continue interaction.""",
 
 
-   "SUBMIT_FORM_PROMPT": """Submits a form element identified by its mmid selector. This skill can submit forms by either clicking a submit button within the form or by triggering the form's submit event directly.
-   Provide the selector for either the form element itself or a submit button within the form. When available, always use the mmid-based selector pattern (e.g., [mmid='123']).
+   "SUBMIT_FORM_PROMPT": """Submits a form element identified by its selector. This skill can submit forms by either clicking a submit button within the form or by triggering the form's submit event directly.
+   Provide the selector for either the form element itself or a submit button within the form. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors.
    Returns Success if the form was submitted successfully or an explanatory error if submission failed. After form submission, you should retrieve the DOM to see the results or navigate to the next page.""",
 
 

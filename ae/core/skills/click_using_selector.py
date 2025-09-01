@@ -14,18 +14,18 @@ from ae.utils.logger import logger
 from ae.utils.ui_messagetype import MessageType
 
 
-async def click(selector: Annotated[str, "The properly formed query selector string to identify the element for the click action (e.g. [mmid='114']). When \"mmid\" attribute is present, use it for the query selector."],
+async def click(selector: Annotated[str, "The selector string to identify the element for the click action. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)."],
                 wait_before_execution: Annotated[float, "Optional wait time in seconds before executing the click event logic.", float] = 0.0) -> Annotated[str, "A message indicating success or failure of the click."]:
     """
-    Executes a click action on the element matching the given query selector string within the currently open web page.
+    Executes a click action on the element matching the given selector within the currently open web page.
     If there is no page open, it will raise a ValueError. An optional wait time can be specified before executing the click logic. Use this to wait for the page to load especially when the last action caused the DOM/Page to load.
 
     Parameters:
-    - selector: The query selector string to identify the element for the click action.
+    - selector: The selector string to identify the element for the click action. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
     - wait_before_execution: Optional wait time in seconds before executing the click event logic. Defaults to 0.0 seconds.
 
     Returns:
-    - Success if the click was successful, Appropropriate error message otherwise.
+    - Success if the click was successful, Appropriate error message otherwise.
     """
     logger.info(f"Executing ClickElement with \"{selector}\" as the selector")
 
@@ -65,7 +65,7 @@ async def do_click(page: Page, selector: str, wait_before_execution: float) -> d
 
     Parameters:
     - page: The Playwright page instance.
-    - selector: The query selector string to identify the element for the click action.
+    - selector: The selector string to identify the element for the click action. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
     - wait_before_execution: Optional wait time in seconds before executing the click event logic.
 
     Returns:
@@ -136,7 +136,7 @@ async def is_element_present(page: Page, selector: str) -> bool:
 
     Parameters:
     - page: The Playwright page instance.
-    - selector: The query selector string to identify the element.
+    - selector: The selector string to identify the element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
 
     Returns:
     - True if the element is present, False otherwise.
@@ -151,7 +151,7 @@ async def perform_playwright_click(element: ElementHandle, selector: str):
 
     Parameters:
     - element: The Playwright ElementHandle instance representing the element to be clicked.
-    - selector: The query selector string of the element.
+    - selector: The selector string of the element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
 
     Returns:
     - None
@@ -166,7 +166,7 @@ async def perform_javascript_click(page: Page, selector: str):
 
     Parameters:
     - page: The Playwright page instance.
-    - selector: The query selector string of the element.
+    - selector: The selector string to identify the element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
 
     Returns:
     - None

@@ -14,18 +14,18 @@ from ae.utils.ui_messagetype import MessageType
 
 
 async def drag_and_drop(
-    source_selector: Annotated[str, "The mmid-based query selector string to identify the draggable element (e.g. [mmid='114'])."],
-    target_selector: Annotated[str, "The mmid-based query selector string to identify the drop target element (e.g. [mmid='220'])."],
+    source_selector: Annotated[str, "The selector string to identify the draggable element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)."],
+    target_selector: Annotated[str, "The selector string to identify the drop target element. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)."],
     wait_before_execution: Annotated[float, "Optional wait time in seconds before executing the drag-and-drop logic.", float] = 0.0,
 ) -> Annotated[str, "A message indicating success or failure of the drag-and-drop action."]:
     """
     Drags an element identified by the source selector and drops it onto the element
-    identified by the target selector on the current page. When "mmid" attribute is present,
-    use it for the query selectors.
+    identified by the target selector on the current page. Use Playwright's native selectors:
+    xpath, attribute selectors, or text-based selectors (tagContainsSelector).
 
     Parameters:
-    - source_selector: Query selector of the element to drag.
-    - target_selector: Query selector of the element to drop onto.
+    - source_selector: Selector of the element to drag. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
+    - target_selector: Selector of the element to drop onto. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
     - wait_before_execution: Optional wait time in seconds before executing the operation.
 
     Returns:
@@ -74,6 +74,7 @@ async def do_drag_and_drop(
 ) -> dict[str, str]:
     """
     Perform the drag-and-drop using Playwright's native API with a JavaScript fallback.
+    Supports Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
 
     Returns a dict with 'summary_message' and 'detailed_message'.
     """
@@ -181,7 +182,7 @@ async def do_drag_and_drop(
         traceback.print_exc()
         msg = (
             "Unable to complete drag-and-drop. Verify selectors using GET_DOM_WITH_CONTENT_TYPE(all_fields) "
-            "and try again with correct mmid-based selectors."
+            "and try again with correct selectors using Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)."
         )
         return {
             "summary_message": msg,
