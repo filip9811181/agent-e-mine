@@ -1,3 +1,4 @@
+from audioop import add
 import inspect
 from typing import Annotated
 
@@ -6,6 +7,8 @@ from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 from ae.core.playwright_manager import PlaywrightManager
 from ae.utils.logger import logger
 from ae.utils.ui_messagetype import MessageType
+from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action
+from ae.core.skills.playwright_actions.action_classes import NavigateAction
 
 
 async def openurl(url: Annotated[str, "The URL to navigate to. Value must include the protocol (http:// or https://)."],
@@ -51,6 +54,11 @@ async def openurl(url: Annotated[str, "The URL to navigate to. Value must includ
         # Get the page title
     title = await page.title()
     url=page.url
+
+    navigate_action = NavigateAction(url=url, title=title)
+    add_playwright_action(navigate_action)
+    logger.info(f"Added navigate action to history: {navigate_action}")
+    
     return f"Page loaded: {url}, Title: {title}" # type: ignore
 
 def ensure_protocol(url: str) -> str:

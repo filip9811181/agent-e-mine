@@ -23,6 +23,7 @@ from ae.core.agents_llm_config import AgentsLLMConfig
 from ae.core.autogen_wrapper import AutogenWrapper
 from ae.utils.formatting_helper import is_terminating_message
 from ae.utils.ui_messagetype import MessageType
+from ae.core.skills.playwright_actions.playwright_action_history import get_playwright_action_history
 
 browser_manager = browserManager.PlaywrightManager(headless=False)
 
@@ -112,6 +113,7 @@ async def process_command(command: str, page_url: str, planner_max_chat_round: i
     result = await ag.process_command(command, page_url)  # type: ignore
 
     print(f"Result of command execution: {result}")
+    get_playwright_action_history().get_recent_actions(15)
 
     return result.chat_history
 
