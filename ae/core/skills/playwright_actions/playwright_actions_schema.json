@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Playwright Actions Schema",
+  "description": "JSON schema for defining Playwright automation actions",
+  "type": "object",
+  "definitions": {
+    "selector": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["attributeValueSelector"],
+              "description": "Selector type for attribute-based selection"
+            },
+            "attribute": {
+              "type": "string",
+              "enum": ["id", "class", "name"],
+              "description": "The attribute used for selection"
+            },
+            "value": {
+              "type": "string",
+              "description": "The attribute's value"
+            }
+          },
+          "required": ["type", "attribute", "value"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["tagContainsSelector"],
+              "description": "Selector type for tag-based selection with content"
+            },
+            "value": {
+              "type": "string",
+              "description": "The tag name or content to match"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["xpathSelector"],
+              "description": "Selector type for XPath-based selection"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^(/|//)",
+              "description": "The XPath query identifying the element"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "click",
+          "description": "Click action identifier"
+        },
+        "selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "wait_before_execution": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0,
+          "description": "Optional wait time in seconds before executing the click"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the action"
+        }
+      },
+      "required": ["action", "selector"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "drag_and_drop",
+          "description": "Drag and drop action identifier"
+        },
+        "source_selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "target_selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "wait_before_execution": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0,
+          "description": "Optional wait time in seconds before executing the drag and drop"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the action"
+        }
+      },
+      "required": ["action", "source_selector", "target_selector"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "enter_text_and_click",
+          "description": "Enter text and click action identifier"
+        },
+        "text_selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "text_to_enter": {
+          "type": "string",
+          "description": "The text to enter into the element"
+        },
+        "click_selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "wait_before_click_execution": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0,
+          "description": "Optional wait time in seconds before executing the click"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the action"
+        }
+      },
+      "required": ["action", "text_selector", "text_to_enter", "click_selector"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "enter_text",
+          "description": "Enter text action identifier"
+        },
+        "selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "text_to_enter": {
+          "type": "string",
+          "description": "The text to enter into the element"
+        },
+        "use_keyboard_fill": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to simulate keyboard typing or set value directly"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the action"
+        }
+      },
+      "required": ["action", "selector", "text_to_enter"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "open_url",
+          "description": "Open URL action identifier"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "The URL to open in the browser"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the action"
+        }
+      },
+      "required": ["action", "url"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "submit_form",
+          "description": "Submit form action identifier"
+        },
+        "selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "wait_before_execution": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0,
+          "description": "Optional wait time in seconds before executing the form submission"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the action"
+        }
+      },
+      "required": ["action", "selector"],
+      "additionalProperties": false
+    }
+  ]
+}
