@@ -12,6 +12,8 @@ from ae.utils.dom_mutation_observer import subscribe  # type: ignore
 from ae.utils.dom_mutation_observer import unsubscribe  # type: ignore
 from ae.utils.logger import logger
 from ae.utils.ui_messagetype import MessageType
+from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action
+from ae.core.skills.playwright_actions.action_classes import ClickAction
 
 
 async def click(selector: Annotated[str, "The selector string to identify the element for the click action. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)."],
@@ -53,6 +55,10 @@ async def click(selector: Annotated[str, "The selector string to identify the el
     unsubscribe(detect_dom_changes)
     await browser_manager.take_screenshots(f"{function_name}_end", page)
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
+    
+    click_action = ClickAction(selector=selector)
+    add_playwright_action(click_action)
+    logger.info(f"Added click action to history: {click_action}")
 
     if dom_changes_detected:
         return f"Success: {result['summary_message']}.\n As a consequence of this action, new elements have appeared in view: {dom_changes_detected}. This means that the action to click {selector} is not yet executed and needs further interaction. Get all_fields DOM to complete the interaction."
