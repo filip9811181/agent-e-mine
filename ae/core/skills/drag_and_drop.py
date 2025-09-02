@@ -60,9 +60,9 @@ async def drag_and_drop(
     await browser_manager.take_screenshots(f"{function_name}_end", page)
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
 
-    # drag_and_drop_action = DragAndDropAction.from_strings(source_selector_string=source_selector, target_selector_string=target_selector)
-    # add_playwright_action(drag_and_drop_action)
-    # logger.info(f"Added drag and drop action to history: {action_to_json(drag_and_drop_action)}")
+    drag_and_drop_action = DragAndDropAction.from_strings(source_selector_string=source_selector, target_selector_string=target_selector)
+    add_playwright_action(drag_and_drop_action)
+    logger.info(f"Added drag and drop action to history: {action_to_json(drag_and_drop_action)}")
 
     if dom_changes_detected:
         return (

@@ -1,15 +1,16 @@
 """
-Selector Parser Module
+Selector Generator Module
 
-This module provides functionality to parse string selectors into structured JSON format
-for Playwright actions. It supports various selector types including XPath, CSS selectors,
-attribute selectors, and text-based selectors.
+This module provides functionality to generate XPath selectors from mmid-based selectors
+for Playwright actions. It queries elements from the current page and generates XPath
+selectors when elements are found.
 """
 
 import re
 from typing import Dict, Any, Optional, Union, List
 from dataclasses import dataclass
 from enum import Enum
+from playwright.async_api import Page
 
 
 class SelectorType(Enum):
@@ -27,303 +28,182 @@ class ParsedSelector:
     original_string: str
 
 
-class SelectorParser:
-    """Parser for converting string selectors to structured JSON format."""
+class SelectorGenerator:
+    """Generator for creating XPath selectors from mmid-based selectors."""
     
     def __init__(self):
-        """Initialize the selector parser with regex patterns."""
-        # XPath patterns
-        self.xpath_patterns = [
-            r'^//',  # XPath starting with //
-            r'^/html',  # XPath starting with /html
-            r'^\.\./',  # XPath with parent navigation
-            r'^ancestor::',  # XPath ancestor
-            r'^descendant::',  # XPath descendant
-            r'^following::',  # XPath following
-            r'^preceding::',  # XPath preceding
-            r'^parent::',  # XPath parent
-            r'^child::',  # XPath child
-            r'^self::',  # XPath self
-            r'^attribute::',  # XPath attribute
-            r'^namespace::',  # XPath namespace
-        ]
-        
-
-        
-        # Attribute selector patterns
-        self.attribute_patterns = {
-            'id': r'^#([a-zA-Z][a-zA-Z0-9_-]*)$',
-            'class': r'^\.([a-zA-Z][a-zA-Z0-9_-]*)$',
-            'name': r'^\[name="([^"]+)"\]$',
-            'type': r'^\[type="([^"]+)"\]$',
-            'value': r'^\[value="([^"]+)"\]$',
-            'placeholder': r'^\[placeholder="([^"]+)"\]$',
-            'title': r'^\[title="([^"]+)"\]$',
-            'alt': r'^\[alt="([^"]+)"\]$',
-            'src': r'^\[src="([^"]+)"\]$',
-            'href': r'^\[href="([^"]+)"\]$',
-        }
-        
-
+        """Initialize the selector generator."""
+        pass
     
-    def parse(self, selector_string: str) -> ParsedSelector:
+    async def parse(self, page: Page, selector_with_mmid: str) -> Optional[str]:
         """
-        Parse a string selector into structured JSON format.
+        Generate XPath selector from mmid-based selector by querying elements from current page.
         
         Args:
-            selector_string: The selector string to parse
+            page: The Playwright Page object representing the browser tab
+            selector_with_mmid: The selector string with mmid attribute
             
         Returns:
-            ParsedSelector object with type and structured data
+            XPath selector string if elements found, None if no elements found
+        """
+        if not selector_with_mmid or not isinstance(selector_with_mmid, str):
+            return None
+        
+        selector_with_mmid = selector_with_mmid.strip()
+        
+        try:
+            # Query elements from current page using the mmid selector
+            elements = await page.query_selector_all(selector_with_mmid)
             
-        Raises:
-            ValueError: If the selector string cannot be parsed
-        """
-        if not selector_string or not isinstance(selector_string, str):
-            raise ValueError("Selector string must be a non-empty string")
-        
-        selector_string = selector_string.strip()
-        
-        # Try to parse as XPath
-        if self._is_xpath(selector_string):
-            return self._parse_xpath(selector_string)
-        
-        # Try to parse as attribute selector
-        attribute_selector = self._parse_attribute_selector(selector_string)
-        if attribute_selector:
-            return attribute_selector
-        
-        # Default to tag contains selector
-        return self._parse_tag_contains(selector_string)
-    
-    def _is_xpath(self, selector: str) -> bool:
-        """Check if selector is an XPath expression."""
-        return any(re.match(pattern, selector) for pattern in self.xpath_patterns)
-       
-    def _parse_xpath(self, selector: str) -> ParsedSelector:
-        """Parse XPath selector."""
-        return ParsedSelector(
-            type=SelectorType.XPATH,
-            data={
-                "type": "xpathSelector",
-                "value": selector
-            },
-            original_string=selector
-        )
-    
-    def _parse_attribute_selector(self, selector: str) -> Optional[ParsedSelector]:
-        """Parse attribute-based selector."""
-        for attribute, pattern in self.attribute_patterns.items():
-            match = re.match(pattern, selector)
-            if match:
-                value = match.group(1)
-                
-                if attribute == 'id':
-                    return ParsedSelector(
-                        type=SelectorType.ATTRIBUTE_VALUE,
-                        data={
-                            "type": "attributeValueSelector",
-                            "attribute": "id",
-                            "value": f"#{value}"
-                        },
-                        original_string=selector
-                    )
-                elif attribute == 'class':
-                    return ParsedSelector(
-                        type=SelectorType.ATTRIBUTE_VALUE,
-                        data={
-                            "type": "attributeValueSelector",
-                            "attribute": "class",
-                            "value": f".{value}"
-                        },
-                        original_string=selector
-                    )
-                else:
-                    return ParsedSelector(
-                        type=SelectorType.ATTRIBUTE_VALUE,
-                        data={
-                            "type": "attributeValueSelector",
-                            "attribute": attribute,
-                            "value": value
-                        },
-                        original_string=selector
-                    )
-        
-        return None
-        
-    def _parse_tag_contains(self, selector: str) -> ParsedSelector:
-        """Parse as tag contains selector (default fallback)."""
-        return ParsedSelector(
-            type=SelectorType.TAG_CONTAINS,
-            data={
-                "type": "tagContainsSelector",
-                "value": selector
-            },
-            original_string=selector
-        )
-    
-    def parse_multiple(self, selectors: List[str]) -> List[ParsedSelector]:
-        """
-        Parse multiple selector strings.
-        
-        Args:
-            selectors: List of selector strings to parse
-            
-        Returns:
-            List of ParsedSelector objects
-        """
-        return [self.parse(selector) for selector in selectors]
-    
-    def to_playwright_selector(self, parsed_selector: ParsedSelector) -> str:
-        """
-        Convert parsed selector back to Playwright-compatible string.
-        
-        Args:
-            parsed_selector: ParsedSelector object
-            
-        Returns:
-            Playwright-compatible selector string
-        """
-        selector_type = parsed_selector.type
-        data = parsed_selector.data
-        
-        if selector_type == SelectorType.XPATH:
-            return data["value"]
-        elif selector_type == SelectorType.ATTRIBUTE_VALUE:
-            attribute = data["attribute"]
-            value = data["value"]
-            
-            if attribute == "id":
-                return f"#{value[1:]}" if value.startswith("#") else f"#{value}"
-            elif attribute == "class":
-                return f".{value[1:]}" if value.startswith(".") else f".{value}"
+            # If element count is greater than 0, generate XPath selector
+            if len(elements) > 0:
+                # Generate XPath for the first element
+                xpath_selector = await self._generate_xpath_for_element(page, elements[0])
+                return xpath_selector
             else:
-                return f'[{attribute}="{value}"]'
-        else:  # TAG_CONTAINS
-            return data["value"]
+                # If count is 0, return None
+                return None
+                
+        except Exception:
+            # If there's any error, return None
+            return None
     
-    def validate_selector(self, selector_string: str) -> bool:
+    async def _generate_xpath_for_element(self, page: Page, element) -> str:
         """
-        Validate if a selector string can be parsed.
+        Generate XPath selector for a given element.
         
         Args:
-            selector_string: The selector string to validate
+            page: The Playwright Page object
+            element: The element to generate XPath for
             
         Returns:
-            True if valid, False otherwise
+            XPath selector string
         """
         try:
-            self.parse(selector_string)
-            return True
-        except (ValueError, Exception):
-            return False
+            # Use Playwright's built-in XPath generation
+            xpath = await page.evaluate("""
+                (element) => {
+                    function getXPath(element) {
+                        if (element.id !== '') {
+                            return 'id("' + element.id + '")';
+                        }
+                        if (element === document.body) {
+                            return element.tagName;
+                        }
+                        
+                        var ix = 0;
+                        var siblings = element.parentNode.childNodes;
+                        for (var i = 0; i < siblings.length; i++) {
+                            var sibling = siblings[i];
+                            if (sibling === element) {
+                                return getXPath(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']';
+                            }
+                            if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
+                                ix++;
+                            }
+                        }
+                    }
+                    return getXPath(element);
+                }
+            """, element)
+            
+            # Ensure it starts with //
+            if not xpath.startswith('//'):
+                xpath = '//' + xpath
+                
+            return xpath
+            
+        except Exception:
+            # Fallback: try to generate a simple XPath based on tag and attributes
+            try:
+                tag_name = await element.evaluate('el => el.tagName.toLowerCase()')
+                element_id = await element.evaluate('el => el.id')
+                element_class = await element.evaluate('el => el.className')
+                
+                if element_id:
+                    return f'//{tag_name}[@id="{element_id}"]'
+                elif element_class:
+                    # Take the first class if multiple classes exist
+                    first_class = element_class.split()[0] if element_class else ''
+                    if first_class:
+                        return f'//{tag_name}[@class="{first_class}"]'
+                
+                return f'//{tag_name}'
+                
+            except Exception:
+                return '//*'
+    
 
 
-# Global selector parser instance
-_selector_parser: Optional[SelectorParser] = None
+
+# Global selector generator instance
+_selector_generator: Optional[SelectorGenerator] = None
 
 
-def get_selector_parser() -> SelectorParser:
-    """Get the global selector parser instance."""
-    global _selector_parser
-    if _selector_parser is None:
-        _selector_parser = SelectorParser()
-    return _selector_parser
+def get_selector_generator() -> SelectorGenerator:
+    """Get the global selector generator instance."""
+    global _selector_generator
+    if _selector_generator is None:
+        _selector_generator = SelectorGenerator()
+    return _selector_generator
 
 
-def parse_selector(selector_string: str) -> ParsedSelector:
+async def generate_selector(page: Page, selector_with_mmid: str) -> Optional[str]:
     """
-    Convenience function to parse a single selector string.
+    Convenience function to generate XPath selector from mmid-based selector.
     
     Args:
-        selector_string: The selector string to parse
+        page: The Playwright Page object
+        selector_with_mmid: The selector string with mmid attribute
         
     Returns:
-        ParsedSelector object
+        XPath selector string if elements found, None if no elements found
     """
-    parser = get_selector_parser()
-    return parser.parse(selector_string)
+    generator = get_selector_generator()
+    return await generator.parse(page, selector_with_mmid)
 
 
-def parse_selectors(selectors: List[str]) -> List[ParsedSelector]:
-    """
-    Convenience function to parse multiple selector strings.
-    
-    Args:
-        selectors: List of selector strings to parse
-        
-    Returns:
-        List of ParsedSelector objects
-    """
-    parser = get_selector_parser()
-    return parser.parse_multiple(selectors)
 
-
-def selector_to_json(selector_string: str) -> Dict[str, Any]:
-    """
-    Convert a selector string to JSON format.
-    
-    Args:
-        selector_string: The selector string to convert
-        
-    Returns:
-        Dictionary representing the selector in JSON format
-    """
-    parsed = parse_selector(selector_string)
-    return parsed.data
-
-
-def validate_selector_string(selector_string: str) -> bool:
-    """
-    Validate if a selector string can be parsed.
-    
-    Args:
-        selector_string: The selector string to validate
-        
-    Returns:
-        True if valid, False otherwise
-    """
-    parser = get_selector_parser()
-    return parser.validate_selector(selector_string)
 
 
 # Example usage and testing
 if __name__ == "__main__":
-    parser = SelectorParser()
+    import asyncio
+    from playwright.async_api import async_playwright
     
-    # Test cases
-    test_selectors = [
-        "//div[@class='container']",  # XPath
-        "#submit-button",  # ID selector
-        ".form-group",  # Class selector
-        "[name='username']",  # Name attribute
-        "button",  # Tag selector
-        "//input[@type='text' and @placeholder='Enter name']",  # Complex XPath
-        "[data-testid='login-form']",  # Data attribute
-    ]
+    async def test_selector_generator():
+        generator = SelectorGenerator()
+        
+        # Test cases with mmid selectors
+        test_selectors = [
+            "[mmid='114']",  # mmid selector
+            "[mmid='submit-button']",  # mmid selector
+            "[mmid='form-group']",  # mmid selector
+        ]
+        
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            page = await browser.new_page()
+            await page.set_content("""
+                <html>
+                    <body>
+                        <div mmid="114">Test Element 1</div>
+                        <button mmid="submit-button">Submit</button>
+                        <div mmid="form-group">Form Group</div>
+                    </body>
+                </html>
+            """)
+            
+            print("=== Selector Generator Test Results ===")
+            for selector in test_selectors:
+                try:
+                    xpath = await generator.parse(page, selector)
+                    print(f"\nOriginal: {selector}")
+                    print(f"Generated XPath: {xpath}")
+                except Exception as e:
+                    print(f"\nError generating XPath for '{selector}': {e}")
+            
+            await browser.close()
     
-    print("=== Selector Parser Test Results ===")
-    for selector in test_selectors:
-        try:
-            parsed = parser.parse(selector)
-            print(f"\nOriginal: {selector}")
-            print(f"Type: {parsed.type.value}")
-            print(f"JSON: {parsed.data}")
-            print(f"Playwright: {parser.to_playwright_selector(parsed)}")
-            print(f"Valid: {parser.validate_selector(selector)}")
-        except Exception as e:
-            print(f"\nError parsing '{selector}': {e}")
-    
-    # Test multiple selectors
-    print(f"\n=== Multiple Selector Parsing ===")
-    multiple_parsed = parser.parse_multiple(test_selectors[:5])
-    for i, parsed in enumerate(multiple_parsed):
-        print(f"{i+1}. {test_selectors[i]} -> {parsed.type.value}")
-    
-    # Test convenience functions
-    print(f"\n=== Convenience Functions ===")
-    json_result = selector_to_json("#test-id")
-    print(f"selector_to_json('#test-id'): {json_result}")
-    
-    is_valid = validate_selector_string("//div[@id='test']")
-    print(f"validate_selector_string('//div[@id='test']'): {is_valid}")
+    # Run the test
+    asyncio.run(test_selector_generator())
