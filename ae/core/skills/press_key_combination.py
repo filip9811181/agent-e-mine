@@ -39,7 +39,7 @@ async def press_key_combination(key_combination: Annotated[str, "The key to pres
     if page is None: # type: ignore
         raise ValueError('No active page found. OpenURL command opens a new page.')
 
-    press_key_combination_action = await SendKeysIWAAction.from_dict({"keys": key_combination})
+    press_key_combination_action = SendKeysIWAAction.from_dict({"keys": key_combination})
     if press_key_combination_action:
         add_playwright_action(press_key_combination_action)
         logger.info(f"Added press key combination action to history: {action_to_json(press_key_combination_action)}")

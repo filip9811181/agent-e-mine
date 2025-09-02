@@ -116,7 +116,9 @@ async def process_command(command: str, page_url: str, planner_max_chat_round: i
     action_history = get_playwright_action_history().get_recent_actions(15)
     get_playwright_action_history().clear_history()
 
-    return action_history
+    # Convert action history to JSON array
+    action_history_json = [action.to_dict() for action in action_history]
+    return { "actions": action_history_json}
 
 if __name__ == "__main__":
     logger.info("**********Application Started**********")

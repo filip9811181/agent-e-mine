@@ -611,6 +611,11 @@ class SendKeysIWAAction(Action):
     def type(self) -> ActionType:
         return ActionType.SEND_KEYS_IWA
     
+    @property
+    def selector(self) -> Optional[Selector]:
+        """SendKeysIWAAction doesn't use a selector."""
+        return None
+    
     def to_dict(self) -> Dict[str, Any]:
         return {
             "type": self.type.value,
