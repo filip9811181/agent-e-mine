@@ -7,6 +7,8 @@ from playwright.async_api import ElementHandle
 from playwright.async_api import Page
 
 from ae.core.playwright_manager import PlaywrightManager
+from ae.core.skills.playwright_actions.action_classes import SubmitAction, action_to_json
+from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action
 from ae.utils.dom_helper import get_element_outer_html
 from ae.utils.dom_mutation_observer import subscribe  # type: ignore
 from ae.utils.dom_mutation_observer import unsubscribe  # type: ignore
@@ -56,6 +58,10 @@ async def submit_form(
     await browser_manager.take_screenshots(f"{function_name}_end", page)
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
 
+    submit_form_action = SubmitAction.from_string(selector_string=selector)
+    add_playwright_action(submit_form_action)
+    logger.info(f"Added submit form action to history: {action_to_json(submit_form_action)}")
+            
     if dom_changes_detected:
         return f"Success: {result['summary_message']}.\n As a consequence of this action, new elements have appeared in view: {dom_changes_detected}. This means that the form submission triggered page changes. Get all_fields DOM to see the updated page content."
     return result["detailed_message"]

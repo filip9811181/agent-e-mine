@@ -6,6 +6,8 @@ from ae.core.playwright_manager import PlaywrightManager
 from ae.core.skills.click_using_selector import do_click
 from ae.core.skills.enter_text_using_selector import do_entertext
 from ae.core.skills.press_key_combination import do_press_key_combination
+from ae.core.skills.playwright_actions.action_classes import ClickAction, TypeAction, action_to_json
+from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action
 from ae.utils.logger import logger
 from ae.utils.ui_messagetype import MessageType
 
@@ -79,4 +81,12 @@ async def enter_text_and_click(
 
     await browser_manager.take_screenshots(f"{function_name}_end", page)
 
+    edit_text_action = TypeAction.from_string(selector_string=text_selector, text=text_to_enter)
+    add_playwright_action(edit_text_action)
+    logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+
+    click_action = ClickAction.from_string(selector_string=click_selector)
+    add_playwright_action(click_action)
+    logger.info(f"Added click action to history: {action_to_json(click_action)}")
+    
     return result["detailed_message"]

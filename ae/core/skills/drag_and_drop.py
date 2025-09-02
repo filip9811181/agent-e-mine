@@ -1,11 +1,14 @@
 import asyncio
 import inspect
+from this import d
 import traceback
 from typing import Annotated
 
 from playwright.async_api import Page
 
 from ae.core.playwright_manager import PlaywrightManager
+from ae.core.skills.playwright_actions.action_classes import DragAndDropAction, action_to_json
+from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action
 from ae.utils.dom_helper import get_element_outer_html
 from ae.utils.dom_mutation_observer import subscribe  # type: ignore
 from ae.utils.dom_mutation_observer import unsubscribe  # type: ignore
@@ -56,6 +59,10 @@ async def drag_and_drop(
     unsubscribe(detect_dom_changes)
     await browser_manager.take_screenshots(f"{function_name}_end", page)
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
+
+    drag_and_drop_action = DragAndDropAction.from_strings(source_selector_string=source_selector, target_selector_string=target_selector)
+    add_playwright_action(drag_and_drop_action)
+    logger.info(f"Added drag and drop action to history: {action_to_json(drag_and_drop_action)}")
 
     if dom_changes_detected:
         return (
