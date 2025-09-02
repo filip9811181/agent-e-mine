@@ -157,7 +157,7 @@ async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'quer
         query_selector,
     )
 
-    result = await do_entertext(page, query_selector, text_to_enter)
+    result = await do_entertext(page, query_selector, text_to_enter, use_keyboard_fill=False)
     await asyncio.sleep(0.1) # sleep for 100ms to allow the mutation observer to detect changes
     unsubscribe(detect_dom_changes)
 

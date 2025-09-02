@@ -66,7 +66,7 @@ async def enter_text_and_click(
     function_name = inspect.currentframe().f_code.co_name # type: ignore
     await browser_manager.take_screenshots(f"{function_name}_start", page)
 
-    text_entry_result = await do_entertext(page, text_selector, text_to_enter, use_keyboard_fill=True)
+    text_entry_result = await do_entertext(page, text_selector, text_to_enter, use_keyboard_fill=False)
 
     #await browser_manager.notify_user(text_entry_result["summary_message"])
     if not text_entry_result["summary_message"].startswith("Success"):
