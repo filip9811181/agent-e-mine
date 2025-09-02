@@ -114,6 +114,7 @@ async def process_command(command: str, page_url: str, planner_max_chat_round: i
 
     print(f"Result of command execution: {result}")
     get_playwright_action_history().get_recent_actions(15)
+    get_playwright_action_history().clear_history()
 
     return result.chat_history
 
