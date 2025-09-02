@@ -58,9 +58,9 @@ async def submit_form(
     await browser_manager.take_screenshots(f"{function_name}_end", page)
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
 
-    submit_form_action = SubmitAction.from_string(selector_string=selector)
-    add_playwright_action(submit_form_action)
-    logger.info(f"Added submit form action to history: {action_to_json(submit_form_action)}")
+    # submit_form_action = SubmitAction.from_string(selector_string=selector)
+    # add_playwright_action(submit_form_action)
+    # logger.info(f"Added submit form action to history: {action_to_json(submit_form_action)}")
             
     if dom_changes_detected:
         return f"Success: {result['summary_message']}.\n As a consequence of this action, new elements have appeared in view: {dom_changes_detected}. This means that the form submission triggered page changes. Get all_fields DOM to see the updated page content."

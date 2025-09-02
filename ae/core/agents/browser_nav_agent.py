@@ -111,11 +111,11 @@ class BrowserNavAgent:
         self.agent.register_for_llm(description=LLM_PROMPTS["PAUSE_FLOW_PROMPT"])(pause_flow)
         self.browser_nav_executor.register_for_execution()(pause_flow)
 
-        self.agent.register_for_llm(description=LLM_PROMPTS["DRAG_AND_DROP_PROMPT"])(drag_and_drop)
-        self.browser_nav_executor.register_for_execution()(drag_and_drop)
+        # self.agent.register_for_llm(description=LLM_PROMPTS["DRAG_AND_DROP_PROMPT"])(drag_and_drop)
+        # self.browser_nav_executor.register_for_execution()(drag_and_drop)
 
-        self.agent.register_for_llm(description=LLM_PROMPTS["SUBMIT_FORM_PROMPT"])(submit_form)
-        self.browser_nav_executor.register_for_execution()(submit_form)
+        # self.agent.register_for_llm(description=LLM_PROMPTS["SUBMIT_FORM_PROMPT"])(submit_form)
+        # self.browser_nav_executor.register_for_execution()(submit_form)
 
         '''
         # Register reply function for printing messages

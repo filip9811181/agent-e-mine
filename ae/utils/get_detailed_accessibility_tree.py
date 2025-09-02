@@ -69,10 +69,10 @@ async def __fetch_dom_info(page: Page, accessibility_tree: dict[str, Any], only_
 
     logger.debug("Reconciling the Accessibility Tree with the DOM")
     # Define the attributes to fetch for each element
-    attributes = ['name', 'aria-label', 'placeholder', 'mmid', "id", "for", "data-testid"]
+    attributes = ['name', 'aria-label', 'placeholder', 'mmid', "id", "for", "data-testid", "class"]
     backup_attributes = [] #if the attributes are not found, then try to get these attributes
     tags_to_ignore = ['head','style', 'script', 'link', 'meta', 'noscript', 'template', 'iframe', 'g', 'main', 'c-wiz','svg', 'path']
-    attributes_to_delete = ["level", "multiline", "haspopup", "id", "for"]
+    attributes_to_delete = []
     ids_to_ignore = ['agentDriveAutoOverlay']
 
     # Recursive function to process each node in the accessibility tree
@@ -505,6 +505,7 @@ async def do_get_accessibility_info(page: Page, only_input_fields: bool = False)
     Returns:
         dict[str, Any] or None: The enhanced accessibility tree as a dictionary, or None if an error occurred.
     """
+    await __inject_attributes(page)
     accessibility_tree: dict[str, Any] = await page.accessibility.snapshot(interesting_only=True)  # type: ignore
 
     with open(os.path.join(SOURCE_LOG_FOLDER_PATH, 'json_accessibility_dom.json'), 'w',  encoding='utf-8') as f:

@@ -24,7 +24,7 @@ class EnterTextEntry:
     Represents an entry for text input.
 
     Attributes:
-        query_selector (str): A valid DOM selector query. Use Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector).
+        query_selector (str): A valid DOM selector query. Use the mmid attribute.
         text (str): The text to enter in the element identified by the query_selector.
     """
 
@@ -83,7 +83,7 @@ async def custom_fill_element(page: Page, selector: str, text_to_enter: str):
         logger.error(f"Error in custom_fill_element, Selector: {selector}, Text: {text_to_enter}. Error: {str(e)}")
         raise
 
-async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'query_selector' (DOM selector query using Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector)) and 'text' (text to enter on the element)."]) -> Annotated[str, "Explanation of the outcome of this operation."]:
+async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'query_selector' (DOM selector query using mmid attribute e.g. [mmid='114']) and 'text' (text to enter on the element)."]) -> Annotated[str, "Explanation of the outcome of this operation."]:
     """
     Enters text into a DOM element identified by a CSS selector.
 
@@ -92,7 +92,7 @@ async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'quer
     The function supports both direct setting of the 'value' property and simulating keyboard typing.
 
     Args:
-        entry (EnterTextEntry): An object containing 'query_selector' (DOM selector query using Playwright's native selectors: xpath, attribute selectors, or text-based selectors (tagContainsSelector))
+        entry (EnterTextEntry): An object containing 'query_selector' (DOM selector query using mmid attribute)
                                 and 'text' (text to enter on the element).
 
     Returns:
@@ -158,9 +158,9 @@ async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'quer
 
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
 
-    edit_text_action = TypeAction.from_string(selector_string=query_selector, text=text_to_enter)
-    add_playwright_action(edit_text_action)
-    logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+    # edit_text_action = TypeAction.from_string(selector_string=query_selector, text=text_to_enter)
+    # add_playwright_action(edit_text_action)
+    # logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
     
     if dom_changes_detected:
         return f"{result['detailed_message']}.\n As a consequence of this action, new elements have appeared in view: {dom_changes_detected}. This means that the action of entering text {text_to_enter} is not yet executed and needs further interaction. Get all_fields DOM to complete the interaction."

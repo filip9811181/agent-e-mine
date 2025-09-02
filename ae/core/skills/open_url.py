@@ -55,9 +55,9 @@ async def openurl(url: Annotated[str, "The URL to navigate to. Value must includ
     title = await page.title()
     url=page.url
 
-    navigate_action = NavigateAction(url=url, title=title)
-    add_playwright_action(navigate_action)
-    logger.info(f"Added navigate action to history: {navigate_action}")
+    # navigate_action = NavigateAction(url=url, title=title)
+    # add_playwright_action(navigate_action)
+    # logger.info(f"Added navigate action to history: {navigate_action}")
     
     return f"Page loaded: {url}, Title: {title}" # type: ignore
 
