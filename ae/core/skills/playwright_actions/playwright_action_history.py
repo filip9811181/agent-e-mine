@@ -114,6 +114,10 @@ class PlaywrightActionHistory:
         self.history = []
         self._save_history()
         logger.info("Playwright action history cleared")
+
+    def get_recent_actions(self, limit: int = 10) -> List[Action]:
+        """Get recent actions from history."""
+        return self.history[-limit:] if self.history else []
     
 
 

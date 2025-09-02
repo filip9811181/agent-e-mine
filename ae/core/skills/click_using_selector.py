@@ -29,7 +29,14 @@ async def click(selector: Annotated[str, "The properly formed query selector str
 
     Returns:
     - Success if the click was successful, Appropropriate error message otherwise.
-    """
+    """    
+    click_action = await ClickAction.from_string_with_generator(page, selector)
+    if click_action:
+        add_playwright_action(click_action)
+        logger.info(f"Added click action to history: {action_to_json(click_action)}")
+    else:
+        logger.warning(f"Could not create click action for selector: {selector}")
+
     logger.info(f"Executing ClickElement with \"{selector}\" as the selector")
 
     # Initialize PlaywrightManager and get the active browser page
@@ -56,13 +63,6 @@ async def click(selector: Annotated[str, "The properly formed query selector str
     unsubscribe(detect_dom_changes)
     await browser_manager.take_screenshots(f"{function_name}_end", page)
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
-    
-    click_action = await ClickAction.from_string_with_generator(page, selector)
-    if click_action:
-        add_playwright_action(click_action)
-        logger.info(f"Added click action to history: {action_to_json(click_action)}")
-    else:
-        logger.warning(f"Could not create click action for selector: {selector}")
 
     if dom_changes_detected:
         return f"Success: {result['summary_message']}.\n As a consequence of this action, new elements have appeared in view: {dom_changes_detected}. This means that the action to click {selector} is not yet executed and needs further interaction. Get all_fields DOM to complete the interaction."

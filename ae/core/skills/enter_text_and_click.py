@@ -38,6 +38,20 @@ async def enter_text_and_click(
     await enter_text_and_click("[mmid='1234']", "Hello, World!", "[mmid='5678']", wait_before_click_execution=1.5)
     ```
     """
+    edit_text_action = await TypeAction.from_string_with_generator(page, text_selector, text_to_enter)
+    if edit_text_action:
+        add_playwright_action(edit_text_action)
+        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+    else:
+        logger.warning(f"Could not create edit text action for selector: {text_selector}")
+
+    click_action = await ClickAction.from_string_with_generator(page, click_selector)
+    if click_action:
+        add_playwright_action(click_action)
+        logger.info(f"Added click action to history: {action_to_json(click_action)}")
+    else:
+        logger.warning(f"Could not create click action for selector: {click_selector}")
+
     logger.info(f"Entering text '{text_to_enter}' into element with selector '{text_selector}' and then clicking element with selector '{click_selector}'.")
 
     # Initialize PlaywrightManager and get the active browser page
@@ -80,19 +94,5 @@ async def enter_text_and_click(
     await asyncio.sleep(0.1) # sleep for 100ms to allow the mutation observer to detect changes
 
     await browser_manager.take_screenshots(f"{function_name}_end", page)
-
-    edit_text_action = await TypeAction.from_string_with_generator(page, text_selector, text_to_enter)
-    if edit_text_action:
-        add_playwright_action(edit_text_action)
-        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
-    else:
-        logger.warning(f"Could not create edit text action for selector: {text_selector}")
-
-    click_action = await ClickAction.from_string_with_generator(page, click_selector)
-    if click_action:
-        add_playwright_action(click_action)
-        logger.info(f"Added click action to history: {action_to_json(click_action)}")
-    else:
-        logger.warning(f"Could not create click action for selector: {click_selector}")
     
     return result["detailed_message"]

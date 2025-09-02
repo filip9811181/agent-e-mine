@@ -24,6 +24,11 @@ async def openurl(url: Annotated[str, "The URL to navigate to. Value must includ
     Returns:
     - URL of the new page.
     """
+    title = await page.title()
+    navigate_action = NavigateAction(url=url, title=title)
+    add_playwright_action(navigate_action)
+    logger.info(f"Added navigate action to history: {navigate_action}")
+
     logger.info(f"Opening URL: {url}")
     browser_manager = PlaywrightManager(browser_type='chromium', headless=False)
     await browser_manager.get_browser_context()
@@ -52,12 +57,6 @@ async def openurl(url: Annotated[str, "The URL to navigate to. Value must includ
 
     await browser_manager.notify_user(f"Opened URL: {url}", message_type=MessageType.ACTION)
         # Get the page title
-    title = await page.title()
-    url=page.url
-
-    navigate_action = NavigateAction(url=url, title=title)
-    add_playwright_action(navigate_action)
-    logger.info(f"Added navigate action to history: {navigate_action}")
     
     return f"Page loaded: {url}, Title: {title}" # type: ignore
 
