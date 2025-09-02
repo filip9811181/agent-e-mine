@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Union, Dict, Any, List
 from enum import Enum
 import json
-from selector_parser import parse_selector
+from ae.core.skills.playwright_actions.selector_parser import parse_selector
 
 
 class SelectorType(str, Enum):

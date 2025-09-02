@@ -9,7 +9,7 @@ from playwright.async_api import Page
 
 from ae.core.playwright_manager import PlaywrightManager
 from ae.core.skills.playwright_actions.action_classes import TypeAction, action_to_json
-from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action, BulkAddPlaywrightAction
+from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action
 from ae.core.skills.press_key_combination import press_key_combination
 from ae.utils.dom_helper import get_element_outer_html
 from ae.utils.dom_mutation_observer import subscribe
