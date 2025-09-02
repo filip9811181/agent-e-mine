@@ -81,12 +81,18 @@ async def enter_text_and_click(
 
     await browser_manager.take_screenshots(f"{function_name}_end", page)
 
-    edit_text_action = TypeAction.from_string(selector_string=text_selector, text=text_to_enter)
-    add_playwright_action(edit_text_action)
-    logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+    edit_text_action = await TypeAction.from_string_with_generator(page, text_selector, text_to_enter)
+    if edit_text_action:
+        add_playwright_action(edit_text_action)
+        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+    else:
+        logger.warning(f"Could not create edit text action for selector: {text_selector}")
 
-    click_action = ClickAction.from_string(selector_string=click_selector)
-    add_playwright_action(click_action)
-    logger.info(f"Added click action to history: {action_to_json(click_action)}")
+    click_action = await ClickAction.from_string_with_generator(page, click_selector)
+    if click_action:
+        add_playwright_action(click_action)
+        logger.info(f"Added click action to history: {action_to_json(click_action)}")
+    else:
+        logger.warning(f"Could not create click action for selector: {click_selector}")
     
     return result["detailed_message"]

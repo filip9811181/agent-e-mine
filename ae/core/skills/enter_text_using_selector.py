@@ -158,9 +158,12 @@ async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'quer
 
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
 
-    edit_text_action = TypeAction.from_string(selector_string=query_selector, text=text_to_enter)
-    add_playwright_action(edit_text_action)
-    logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+    edit_text_action = await TypeAction.from_string_with_generator(page, query_selector, text_to_enter)
+    if edit_text_action:
+        add_playwright_action(edit_text_action)
+        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+    else:
+        logger.warning(f"Could not create edit text action for selector: {query_selector}")
     
     if dom_changes_detected:
         return f"{result['detailed_message']}.\n As a consequence of this action, new elements have appeared in view: {dom_changes_detected}. This means that the action of entering text {text_to_enter} is not yet executed and needs further interaction. Get all_fields DOM to complete the interaction."
@@ -267,8 +270,17 @@ async def bulk_enter_text(
 
         results.append({"query_selector": query_selector, "result": result})
 
-        edit_text_action = TypeAction.from_string(selector_string=query_selector, text=text_to_enter)
-        add_playwright_action(edit_text_action)
-        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+        # Get page for action creation
+        browser_manager = PlaywrightManager(browser_type='chromium', headless=False)
+        page = await browser_manager.get_current_page()
+        if page:
+            edit_text_action = await TypeAction.from_string_with_generator(page, query_selector, text_to_enter)
+            if edit_text_action:
+                add_playwright_action(edit_text_action)
+                logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+            else:
+                logger.warning(f"Could not create edit text action for selector: {query_selector}")
+        else:
+            logger.warning("No active page found for action creation")
 
     return results

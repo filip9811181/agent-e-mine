@@ -10,10 +10,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Union, Dict, Any, List
 from enum import Enum
 import json
-try:
-    from ae.core.skills.playwright_actions.selector_parser import generate_selector
-except ImportError:
-    from .selector_parser import generate_selector
+from ae.core.skills.playwright_actions.selector_generator import generate_selector
 
 
 class SelectorType(str, Enum):
@@ -447,6 +444,23 @@ class SubmitAction(Action):
         
         return cls(selector=selector)
     
+    @classmethod
+    async def from_string_with_generator(cls, page, selector_with_mmid: str) -> Optional['SubmitAction']:
+        """
+        Create a SubmitAction from a mmid-based selector using SelectorGenerator.
+        
+        Args:
+            page: The Playwright Page object
+            selector_with_mmid: The selector string with mmid attribute
+            
+        Returns:
+            SubmitAction instance, or None if no elements found
+        """
+        selector = await Selector.from_string_with_generator(page, selector_with_mmid)
+        if selector is None:
+            return None
+        return cls(selector=selector)
+    
 
 
 
@@ -484,6 +498,27 @@ class DragAndDropAction(Action):
             source_selector=source_selector,
             target_selector=target_selector
         )
+    
+    @classmethod
+    async def from_strings_with_generator(cls, page, source_selector_with_mmid: str, target_selector_with_mmid: str) -> Optional['DragAndDropAction']:
+        """
+        Create a DragAndDropAction from mmid-based selectors using SelectorGenerator.
+        
+        Args:
+            page: The Playwright Page object
+            source_selector_with_mmid: Source element selector string with mmid attribute
+            target_selector_with_mmid: Target element selector string with mmid attribute
+            
+        Returns:
+            DragAndDropAction instance, or None if no elements found
+        """
+        source_selector = await Selector.from_string_with_generator(page, source_selector_with_mmid)
+        target_selector = await Selector.from_string_with_generator(page, target_selector_with_mmid)
+        
+        if source_selector is None or target_selector is None:
+            return None
+        
+        return cls(source_selector=source_selector, target_selector=target_selector)
     
 
 
