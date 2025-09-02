@@ -267,8 +267,8 @@ async def bulk_enter_text(
 
         results.append({"query_selector": query_selector, "result": result})
 
-        edit_text_action = TypeAction.from_string(selector_string=query_selector, text=text_to_enter)
-        add_playwright_action(edit_text_action)
-        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+        # edit_text_action = TypeAction.from_string(selector_string=query_selector, text=text_to_enter)
+        # add_playwright_action(edit_text_action)
+        # logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
 
     return results
