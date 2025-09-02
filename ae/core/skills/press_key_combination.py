@@ -5,6 +5,8 @@ from typing import Annotated
 from playwright.async_api import Page  # type: ignore
 
 from ae.core.playwright_manager import PlaywrightManager
+from ae.core.skills.playwright_actions.action_classes import SendKeysIWAAction, action_to_json
+from ae.core.skills.playwright_actions.playwright_action_history import add_playwright_action
 from ae.utils.dom_mutation_observer import subscribe  # type: ignore
 from ae.utils.dom_mutation_observer import unsubscribe  # type: ignore
 from ae.utils.logger import logger
@@ -36,6 +38,13 @@ async def press_key_combination(key_combination: Annotated[str, "The key to pres
 
     if page is None: # type: ignore
         raise ValueError('No active page found. OpenURL command opens a new page.')
+
+    press_key_combination_action = await SendKeysIWAAction.from_dict({"keys": key_combination})
+    if press_key_combination_action:
+        add_playwright_action(press_key_combination_action)
+        logger.info(f"Added press key combination action to history: {action_to_json(press_key_combination_action)}")
+    else:
+        logger.warning(f"Could not create press key combination action for key combo: {key_combination}")
 
     # Split the key combination if it's a combination of keys
     keys = key_combination.split('+')

@@ -108,7 +108,8 @@ class ActionType(str, Enum):
     DRAG_AND_DROP = "dragAndDrop"
     SCREENSHOT = "screenshot"
     GET_DROPDOWN_OPTIONS = "getDropDownOptions"
-    SELECT_DROPDOWN_OPTION = "selectDropDownOption"
+    SELECT_DROPDOWN_OPTION = "SelectDropDownOptionAction"
+    SEND_KEYS_IWA = "sendkeysiwa"
 
 
 class Action(ABC):
@@ -599,6 +600,28 @@ class SelectDropDownOptionAction(Action):
             selector=selector,
             text=data.get("text", "")
         )
+
+
+@dataclass
+class SendKeysIWAAction(Action):
+    """Sends keys using IWA (Internet Web Automation) method."""
+    keys: str = ""
+    
+    @property
+    def type(self) -> ActionType:
+        return ActionType.SEND_KEYS_IWA
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": self.type.value,
+            "keys": self.keys
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'SendKeysIWAAction':
+        return cls(
+            keys=data.get("keys", "")
+        )
     
 
 
@@ -619,7 +642,8 @@ class ActionFactory:
         ActionType.DRAG_AND_DROP: DragAndDropAction,
         ActionType.SCREENSHOT: ScreenshotAction,
         ActionType.GET_DROPDOWN_OPTIONS: GetDropDownOptionsAction,
-        ActionType.SELECT_DROPDOWN_OPTION: SelectDropDownOptionAction
+        ActionType.SELECT_DROPDOWN_OPTION: SelectDropDownOptionAction,
+        ActionType.SEND_KEYS_IWA: SendKeysIWAAction
     }
     
     @classmethod
