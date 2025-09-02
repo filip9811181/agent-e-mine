@@ -38,6 +38,15 @@ async def enter_text_and_click(
     await enter_text_and_click("[mmid='1234']", "Hello, World!", "[mmid='5678']", wait_before_click_execution=1.5)
     ```
     """
+    logger.info(f"Entering text '{text_to_enter}' into element with selector '{text_selector}' and then clicking element with selector '{click_selector}'.")
+
+    # Initialize PlaywrightManager and get the active browser page
+    browser_manager = PlaywrightManager(browser_type='chromium', headless=False)
+    page = await browser_manager.get_current_page()
+    if page is None: # type: ignore
+        logger.error("No active page found")
+        raise ValueError('No active page found. OpenURL command opens a new page.')
+        
     edit_text_action = await TypeAction.from_string_with_generator(page, text_selector, text_to_enter)
     if edit_text_action:
         add_playwright_action(edit_text_action)
@@ -51,15 +60,6 @@ async def enter_text_and_click(
         logger.info(f"Added click action to history: {action_to_json(click_action)}")
     else:
         logger.warning(f"Could not create click action for selector: {click_selector}")
-
-    logger.info(f"Entering text '{text_to_enter}' into element with selector '{text_selector}' and then clicking element with selector '{click_selector}'.")
-
-    # Initialize PlaywrightManager and get the active browser page
-    browser_manager = PlaywrightManager(browser_type='chromium', headless=False)
-    page = await browser_manager.get_current_page()
-    if page is None: # type: ignore
-        logger.error("No active page found")
-        raise ValueError('No active page found. OpenURL command opens a new page.')
 
     await browser_manager.highlight_element(text_selector, True)
 

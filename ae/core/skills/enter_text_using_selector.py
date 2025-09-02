@@ -113,13 +113,6 @@ async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'quer
         - If 'use_keyboard_fill' is set to True, the function uses the 'page.keyboard.type' method to enter the text.
         - If 'use_keyboard_fill' is set to False, the function uses the 'custom_fill_element' method to enter the text.
     """
-    edit_text_action = await TypeAction.from_string_with_generator(page, query_selector, text_to_enter)
-    if edit_text_action:
-        add_playwright_action(edit_text_action)
-        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
-    else:
-        logger.warning(f"Could not create edit text action for selector: {query_selector}")
-
     logger.info(f"Entering text: {entry}")
     query_selector: str = entry['query_selector']
     text_to_enter: str = entry['text']
@@ -129,6 +122,13 @@ async def entertext(entry: Annotated[EnterTextEntry, "An object containing 'quer
     page = await browser_manager.get_current_page()
     if page is None: # type: ignore
         return "Error: No active page found. OpenURL command opens a new page."
+
+    edit_text_action = await TypeAction.from_string_with_generator(page, query_selector, text_to_enter)
+    if edit_text_action:
+        add_playwright_action(edit_text_action)
+        logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
+    else:
+        logger.warning(f"Could not create edit text action for selector: {query_selector}")
 
     function_name = inspect.currentframe().f_code.co_name # type: ignore
 
@@ -269,18 +269,5 @@ async def bulk_enter_text(
         result = await entertext(EnterTextEntry(query_selector=query_selector, text=text_to_enter))
 
         results.append({"query_selector": query_selector, "result": result})
-
-        # Get page for action creation
-        browser_manager = PlaywrightManager(browser_type='chromium', headless=False)
-        page = await browser_manager.get_current_page()
-        if page:
-            edit_text_action = await TypeAction.from_string_with_generator(page, query_selector, text_to_enter)
-            if edit_text_action:
-                add_playwright_action(edit_text_action)
-                logger.info(f"Added edit text action to history: {action_to_json(edit_text_action)}")
-            else:
-                logger.warning(f"Could not create edit text action for selector: {query_selector}")
-        else:
-            logger.warning("No active page found for action creation")
 
     return results

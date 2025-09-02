@@ -30,13 +30,6 @@ async def click(selector: Annotated[str, "The properly formed query selector str
     Returns:
     - Success if the click was successful, Appropropriate error message otherwise.
     """    
-    click_action = await ClickAction.from_string_with_generator(page, selector)
-    if click_action:
-        add_playwright_action(click_action)
-        logger.info(f"Added click action to history: {action_to_json(click_action)}")
-    else:
-        logger.warning(f"Could not create click action for selector: {selector}")
-
     logger.info(f"Executing ClickElement with \"{selector}\" as the selector")
 
     # Initialize PlaywrightManager and get the active browser page
@@ -45,6 +38,13 @@ async def click(selector: Annotated[str, "The properly formed query selector str
 
     if page is None: # type: ignore
         raise ValueError('No active page found. OpenURL command opens a new page.')
+        
+    click_action = await ClickAction.from_string_with_generator(page, selector)
+    if click_action:
+        add_playwright_action(click_action)
+        logger.info(f"Added click action to history: {action_to_json(click_action)}")
+    else:
+        logger.warning(f"Could not create click action for selector: {selector}")
 
     function_name = inspect.currentframe().f_code.co_name # type: ignore
 

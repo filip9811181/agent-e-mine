@@ -34,19 +34,19 @@ async def drag_and_drop(
     Returns:
     - A human-readable string describing the outcome, containing success or an error with guidance.
     """
-    drag_and_drop_action = await DragAndDropAction.from_strings_with_generator(page, source_selector, target_selector)
-    if drag_and_drop_action:
-        add_playwright_action(drag_and_drop_action)
-        logger.info(f"Added drag and drop action to history: {action_to_json(drag_and_drop_action)}")
-    else:
-        logger.warning(f"Could not create drag and drop action for selectors: {source_selector}, {target_selector}")
-        
     logger.info(f"Executing drag_and_drop from '{source_selector}' to '{target_selector}'")
 
     browser_manager = PlaywrightManager(browser_type='chromium', headless=False)
     page = await browser_manager.get_current_page()
     if page is None:  # type: ignore
         raise ValueError('No active page found. OpenURL command opens a new page.')
+        
+    drag_and_drop_action = await DragAndDropAction.from_strings_with_generator(page, source_selector, target_selector)
+    if drag_and_drop_action:
+        add_playwright_action(drag_and_drop_action)
+        logger.info(f"Added drag and drop action to history: {action_to_json(drag_and_drop_action)}")
+    else:
+        logger.warning(f"Could not create drag and drop action for selectors: {source_selector}, {target_selector}")
 
     function_name = inspect.currentframe().f_code.co_name  # type: ignore
 

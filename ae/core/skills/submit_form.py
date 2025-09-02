@@ -40,6 +40,13 @@ async def submit_form(
     if page is None:  # type: ignore
         raise ValueError('No active page found. OpenURL command opens a new page.')
 
+    submit_form_action = await SubmitAction.from_string_with_generator(page, selector)
+    if submit_form_action:
+        add_playwright_action(submit_form_action)
+        logger.info(f"Added submit form action to history: {action_to_json(submit_form_action)}")
+    else:
+        logger.warning(f"Could not create submit form action for selector: {selector}")
+
     function_name = inspect.currentframe().f_code.co_name  # type: ignore
 
     await browser_manager.take_screenshots(f"{function_name}_start", page)
@@ -57,13 +64,6 @@ async def submit_form(
     unsubscribe(detect_dom_changes)
     await browser_manager.take_screenshots(f"{function_name}_end", page)
     await browser_manager.notify_user(result["summary_message"], message_type=MessageType.ACTION)
-
-    submit_form_action = await SubmitAction.from_string_with_generator(page, selector)
-    if submit_form_action:
-        add_playwright_action(submit_form_action)
-        logger.info(f"Added submit form action to history: {action_to_json(submit_form_action)}")
-    else:
-        logger.warning(f"Could not create submit form action for selector: {selector}")
             
     if dom_changes_detected:
         return f"Success: {result['summary_message']}.\n As a consequence of this action, new elements have appeared in view: {dom_changes_detected}. This means that the form submission triggered page changes. Get all_fields DOM to see the updated page content."
