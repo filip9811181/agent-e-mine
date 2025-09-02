@@ -17,8 +17,6 @@ class SelectorType(Enum):
     XPATH = "xpathSelector"
     ATTRIBUTE_VALUE = "attributeValueSelector"
     TAG_CONTAINS = "tagContainsSelector"
-    CSS = "cssSelector"
-    TEXT = "textSelector"
 
 
 @dataclass
@@ -50,18 +48,7 @@ class SelectorParser:
             r'^namespace::',  # XPath namespace
         ]
         
-        # CSS selector patterns
-        self.css_patterns = [
-            r'^[a-zA-Z][a-zA-Z0-9_-]*$',  # Simple tag name
-            r'^#[a-zA-Z][a-zA-Z0-9_-]*$',  # ID selector
-            r'^\.[a-zA-Z][a-zA-Z0-9_-]*$',  # Class selector
-            r'^[a-zA-Z][a-zA-Z0-9_-]*\[',  # Attribute selector
-            r'^[a-zA-Z][a-zA-Z0-9_-]*:',  # Pseudo selector
-            r'^[a-zA-Z][a-zA-Z0-9_-]*\s',  # Descendant selector
-            r'^[a-zA-Z][a-zA-Z0-9_-]*>',  # Child selector
-            r'^[a-zA-Z][a-zA-Z0-9_-]*\+',  # Adjacent sibling
-            r'^[a-zA-Z][a-zA-Z0-9_-]*~',  # General sibling
-        ]
+
         
         # Attribute selector patterns
         self.attribute_patterns = {
@@ -77,13 +64,7 @@ class SelectorParser:
             'href': r'^\[href="([^"]+)"\]$',
         }
         
-        # Text selector patterns
-        self.text_patterns = [
-            r'^text=',
-            r'^text:',
-            r'^contains\(text\(\)',
-            r'^normalize-space\(text\(\)',
-        ]
+
     
     def parse(self, selector_string: str) -> ParsedSelector:
         """
@@ -112,26 +93,13 @@ class SelectorParser:
         if attribute_selector:
             return attribute_selector
         
-        # Try to parse as text selector
-        text_selector = self._parse_text_selector(selector_string)
-        if text_selector:
-            return text_selector
-        
-        # Try to parse as CSS selector
-        if self._is_css_selector(selector_string):
-            return self._parse_css_selector(selector_string)
-        
         # Default to tag contains selector
         return self._parse_tag_contains(selector_string)
     
     def _is_xpath(self, selector: str) -> bool:
         """Check if selector is an XPath expression."""
         return any(re.match(pattern, selector) for pattern in self.xpath_patterns)
-    
-    def _is_css_selector(self, selector: str) -> bool:
-        """Check if selector is a CSS selector."""
-        return any(re.match(pattern, selector) for pattern in self.css_patterns)
-    
+       
     def _parse_xpath(self, selector: str) -> ParsedSelector:
         """Parse XPath selector."""
         return ParsedSelector(
@@ -182,55 +150,7 @@ class SelectorParser:
                     )
         
         return None
-    
-    def _parse_text_selector(self, selector: str) -> Optional[ParsedSelector]:
-        """Parse text-based selector."""
-        for pattern in self.text_patterns:
-            if re.match(pattern, selector):
-                # Extract text content
-                if selector.startswith('text='):
-                    text_content = selector[5:]  # Remove 'text=' prefix
-                elif selector.startswith('text:'):
-                    text_content = selector[5:]  # Remove 'text:' prefix
-                elif 'contains(text()' in selector:
-                    # Extract text from contains(text(), "text")
-                    match = re.search(r'contains\(text\(\),\s*"([^"]+)"', selector)
-                    if match:
-                        text_content = match.group(1)
-                    else:
-                        continue
-                elif 'normalize-space(text()' in selector:
-                    # Extract text from normalize-space(text()) = "text"
-                    match = re.search(r'normalize-space\(text\(\)\)\s*=\s*"([^"]+)"', selector)
-                    if match:
-                        text_content = match.group(1)
-                    else:
-                        continue
-                else:
-                    continue
-                
-                return ParsedSelector(
-                    type=SelectorType.TEXT,
-                    data={
-                        "type": "tagContainsSelector",
-                        "value": text_content
-                    },
-                    original_string=selector
-                )
         
-        return None
-    
-    def _parse_css_selector(self, selector: str) -> ParsedSelector:
-        """Parse CSS selector."""
-        return ParsedSelector(
-            type=SelectorType.CSS,
-            data={
-                "type": "cssSelector",
-                "value": selector
-            },
-            original_string=selector
-        )
-    
     def _parse_tag_contains(self, selector: str) -> ParsedSelector:
         """Parse as tag contains selector (default fallback)."""
         return ParsedSelector(
@@ -279,10 +199,6 @@ class SelectorParser:
                 return f".{value[1:]}" if value.startswith(".") else f".{value}"
             else:
                 return f'[{attribute}="{value}"]'
-        elif selector_type == SelectorType.TEXT:
-            return f'text={data["value"]}'
-        elif selector_type == SelectorType.CSS:
-            return data["value"]
         else:  # TAG_CONTAINS
             return data["value"]
     
@@ -381,12 +297,9 @@ if __name__ == "__main__":
         "#submit-button",  # ID selector
         ".form-group",  # Class selector
         "[name='username']",  # Name attribute
-        "text=Submit",  # Text selector
         "button",  # Tag selector
-        "div.container > input",  # CSS selector
         "//input[@type='text' and @placeholder='Enter name']",  # Complex XPath
         "[data-testid='login-form']",  # Data attribute
-        "text:Login",  # Text selector variant
     ]
     
     print("=== Selector Parser Test Results ===")
