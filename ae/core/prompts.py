@@ -161,62 +161,33 @@ Some basic information about the user: $basic_user_information""",
 
    "EXTRACT_TEXT_FROM_PDF_PROMPT": """Extracts text from a PDF file hosted at the given URL.""",
 
-   "DRAG_AND_DROP_PROMPT": """Performs a drag-and-drop operation by dragging a source element to a target element, both identified by their mmid attribute values.
+   "DRAG_AND_DROP_PROMPT": """Drags a source element to a target element, both identified by mmid attribute values.
    
-   **Usage Guidelines:**
-   - Source element (drag_from_mmid): The element to be dragged
-   - Target element (drag_to_mmid): The destination where the source element will be dropped
-   - Both elements must be visible and interactable on the current page
-   - Ensure the target element can accept the dropped element (e.g., drop zones, sortable lists, file upload areas)
+   **Requirements:**
+   - Both elements must be visible and interactable
+   - Target must accept dropped elements (drop zones, sortable lists, etc.)
    
-   **Best Practices:**
-   - Verify both elements exist and are visible before attempting the operation
-   - Use this for reordering items, moving files, organizing content, or any drag-and-drop interface interactions
-   - After successful drag-and-drop, retrieve the DOM (all_fields type) to observe any UI changes or updates
-   - If the operation fails, check if elements are properly positioned and not overlapping with other UI elements
+   **Usage:**
+   - Reorder items, move files, organize content
+   - After operation, fetch DOM to verify changes
    
-   **Return Values:**
-   - Success: Confirmation that the drag-and-drop operation completed successfully
-   - Error: Detailed explanation of why the operation failed (element not found, not draggable, target not droppable, etc.)
-   
-   **Post-Action:**
-   - Always fetch the updated DOM after drag-and-drop to verify the operation's effect and continue with subsequent interactions""",
+   **Returns:** Success confirmation or detailed error message if operation fails.""",
 
 
-   "SUBMIT_FORM_PROMPT": """Submits a form element identified by its mmid attribute value using the most appropriate submission method available.
+   "SUBMIT_FORM_PROMPT": """Submits a form element identified by mmid attribute value.
    
-   **Submission Methods:**
-   - Primary: Clicks the submit button within the form (if available and enabled)
-   - Fallback: Triggers the form's submit event directly via JavaScript
-   - Alternative: Presses Enter key if the form has a focused input field
+   **Methods:** Clicks submit button, triggers form event, or presses Enter key.
    
-   **Pre-Submission Checklist:**
-   - Verify all required fields are filled with valid data
-   - Check that the form element exists and is visible on the page
-   - Ensure any validation messages or errors are resolved
-   - Confirm the submit button is enabled (not disabled or grayed out)
+   **Before Submitting:**
+   - Ensure all required fields are filled
+   - Verify form is visible and submit button is enabled
+   - Resolve any validation errors
    
-   **Common Use Cases:**
-   - Contact forms, registration forms, login forms
-   - Search forms, filter forms, configuration forms
-   - Multi-step forms, payment forms, survey forms
-   - Any HTML form that requires submission to process data
+   **After Submitting:**
+   - Wait for page updates or navigation
+   - Fetch DOM to verify results
    
-   **Error Handling:**
-   - If submission fails, check for validation errors or missing required fields
-   - Verify network connectivity and server response
-   - Look for JavaScript errors that might prevent form submission
-   - Check if the form requires specific field formats (email, phone, etc.)
-   
-   **Return Values:**
-   - Success: Confirmation that the form was submitted successfully
-   - Error: Detailed explanation of submission failure (validation errors, network issues, missing fields, etc.)
-   
-   **Post-Submission Actions:**
-   - Wait for page navigation or content updates after submission
-   - Retrieve the updated DOM to verify submission results
-   - Look for success messages, error messages, or redirected pages
-   - Continue with next steps based on the submission outcome""",
+   **Returns:** Success confirmation or detailed error message if submission fails.""",
 
 
    "BROWSER_AGENT_NO_SKILLS_PROMPT": """You are an autonomous agent tasked with performing web navigation on a Playwright instance, including logging into websites and executing other web-based actions.
