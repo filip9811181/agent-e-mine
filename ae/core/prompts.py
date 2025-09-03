@@ -111,7 +111,8 @@ Some basic information about the user: $basic_user_information""",
    text_only - returns plain text representing all the text in the web site. Use this for any information retrieval task. This will contain the most complete textual information.
    input_fields - returns a JSON string containing a list of objects representing text input html elements with mmid attribute. Use this strictly for interaction purposes with text input fields.
    all_fields - returns a JSON string containing a list of objects representing all interactive elements and their attributes with mmid attribute. Use this strictly to identify and interact with any type of elements on page.
-   If information is not available in one content type, you must try another content_type.""",
+   If information is not available in one content type, you must try another content_type.
+   Optional parameter as_file_attachment (boolean): When set to True, saves the DOM content as a file and returns file attachment information suitable for OpenAI API usage. This is useful for large DOM content that should be processed as file attachments.""",
 
 
    "GET_ACCESSIBILITY_TREE": """Retrieves the accessibility tree of the current web site.
