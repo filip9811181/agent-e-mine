@@ -135,6 +135,9 @@ Some basic information about the user: $basic_user_information""",
 
    "CLICK_BY_TEXT_PROMPT": """Executes a click action on the element matching the text. If multiple text matches are found, it will click on all of them. Use this as last resort when all else fails.""",
 
+   "SELECT_OPTION_PROMPT": """Selects an option from a dropdown/select element matching the given mmid attribute value. The option is selected by its value attribute.
+   Returns Success if the option was selected successfully or appropriate error message if the selection could not be made.""",
+
    "BULK_ENTER_TEXT_PROMPT": """Bulk enter text in multiple DOM fields. To be used when there are multiple fields to be filled on the same page.
    Enters text in the DOM elements matching the given mmid attribute value.
    The input will receive a list of objects containing the DOM query selector and the text to enter.

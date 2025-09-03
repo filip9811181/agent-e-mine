@@ -20,6 +20,7 @@ from ae.core.skills.pdf_text_extractor import extract_text_from_pdf
 from ae.core.skills.pause_flow import pause_flow
 from ae.core.skills.drag_and_drop import drag_and_drop
 from ae.core.skills.submit_form import submit_form
+from ae.core.skills.select_option import select_option
 
 #from ae.core.skills.pdf_text_extractor import extract_text_from_pdf
 from ae.core.skills.press_key_combination import press_key_combination
@@ -110,6 +111,9 @@ class BrowserNavAgent:
         
         self.agent.register_for_llm(description=LLM_PROMPTS["PAUSE_FLOW_PROMPT"])(pause_flow)
         self.browser_nav_executor.register_for_execution()(pause_flow)
+
+        self.agent.register_for_llm(description=LLM_PROMPTS["SELECT_OPTION_PROMPT"])(select_option)
+        self.browser_nav_executor.register_for_execution()(select_option)
 
         # self.agent.register_for_llm(description=LLM_PROMPTS["DRAG_AND_DROP_PROMPT"])(drag_and_drop)
         # self.browser_nav_executor.register_for_execution()(drag_and_drop)

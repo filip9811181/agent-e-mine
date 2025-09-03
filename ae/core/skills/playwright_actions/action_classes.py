@@ -603,6 +603,52 @@ class SelectDropDownOptionAction(Action):
 
 
 @dataclass
+class SelectOptionAction(Action):
+    """Selects an option from a dropdown/select element by its value attribute."""
+    selector: Optional[Selector] = None
+    value: str = ""
+    
+    @property
+    def type(self) -> ActionType:
+        return ActionType.SELECT
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": self.type.value,
+            "selector": self.selector.to_dict() if self.selector else None,
+            "value": self.value
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'SelectOptionAction':
+        selector_data = data.get("selector")
+        selector = Selector.from_dict(selector_data) if selector_data else None
+        
+        return cls(
+            selector=selector,
+            value=data.get("value", "")
+        )
+    
+    @classmethod
+    async def from_string_with_generator(cls, page, selector_with_mmid: str, value: str = "") -> Optional['SelectOptionAction']:
+        """
+        Create a SelectOptionAction from a mmid-based selector using SelectorGenerator.
+        
+        Args:
+            page: The Playwright Page object
+            selector_with_mmid: The selector string with mmid attribute
+            value: The value attribute of the option to select
+            
+        Returns:
+            SelectOptionAction instance, or None if no elements found
+        """
+        selector = await Selector.from_string_with_generator(page, selector_with_mmid)
+        if selector is None:
+            return None
+        return cls(selector=selector, value=value)
+
+
+@dataclass
 class SendKeysIWAAction(Action):
     """Sends keys using IWA (Internet Web Automation) method."""
     keys: str = ""
