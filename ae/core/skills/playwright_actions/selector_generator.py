@@ -94,6 +94,7 @@ class SelectorGenerator:
                         href: element.href || '',
                         src: element.src || '',
                         title: element.title || '',
+                        href: element.href || '',
                         placeholder: element.placeholder || '',
                         'data-testid': element.getAttribute('data-testid') || '',
                         'data-id': element.getAttribute('data-id') || '',
