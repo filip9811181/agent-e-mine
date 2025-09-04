@@ -17,10 +17,13 @@ from ae.utils.ui_messagetype import MessageType
 
 async def get_dom_with_content_type(
     content_type: Annotated[str, "The type of content to extract: 'text_only': Extracts the innerText of the highest element in the document and responds with text, or 'input_fields': Extracts the text input and button elements in the dom."],
-    as_file_attachment: Annotated[bool, "Whether to return the result as a file attachment for OpenAI API"] = False
+    as_file_attachment: Annotated[bool, "Whether to return the result as a file attachment for OpenAI API"] = True
     ) -> Annotated[dict[str, Any] | str | None, "The output based on the specified content type or file attachment info."]:
     """
     Retrieves and processes the DOM of the active page in a browser instance based on the specified content type.
+    
+    By default, this function saves the DOM content to a file and uploads it to OpenAI to avoid token overflow.
+    The uploaded file information is returned instead of the raw DOM content.
 
     Parameters
     ----------
@@ -29,14 +32,15 @@ async def get_dom_with_content_type(
         - 'text_only': Extracts the innerText of the highest element in the document and responds with text.
         - 'input_fields': Extracts the text input and button elements in the DOM and responds with a JSON object.
         - 'all_fields': Extracts all the fields in the DOM and responds with a JSON object.
-    as_file_attachment : boolget_dom_with_content_type
+    as_file_attachment : bool
         Whether to save the content as a file and return file attachment information for OpenAI API.
+        Defaults to True to prevent token overflow with large DOM content.
 
     Returns
     -------
     dict[str, Any] | str | None
-        The processed content based on the specified content type. When as_file_attachment is True,
-        returns a dict with file information for OpenAI API attachments.
+        When as_file_attachment is True (default), returns a dict with OpenAI file upload information.
+        When as_file_attachment is False, returns the raw DOM content (original behavior).
 
     Raises
     ------
@@ -224,53 +228,26 @@ async def save_content_as_file_attachment(content: Any, content_type: str) -> di
         openai_file_info = await upload_file_to_openai(temp_file_path)
         
         # Return file attachment information in OpenAI format
-        result = {
-            "type": "file_attachment",
-            "file_path": temp_file_path,
-            "content_type": content_type,
-            "file_size": len(file_content.encode('utf-8')),
-            "message": f"DOM content ({content_type}) saved as file attachment"
-        }
-        
         if openai_file_info:
-            # Include OpenAI file information
-            result["openai_file"] = openai_file_info
-            result["openai_format"] = {
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"DOM content ({content_type}) has been uploaded to OpenAI as file attachment."
-                    },
-                    {
-                        "type": "file",
-                        "file_id": openai_file_info["file_id"]
-                    }
-                ]
+            result = {
+                "type": "OpenAI uploaded file attachment",
+                # "openai_file": openai_file_info,
+                "file_id": openai_file_info["file_id"],
+                "filename": openai_file_info["filename"],
+                "bytes": openai_file_info["bytes"],
+                "created_at": openai_file_info["created_at"],
+                "purpose": openai_file_info["purpose"],
+                "status": openai_file_info["status"],
+                # "local_file_path": temp_file_path,
+                # "content_type": content_type
             }
-            result["message"] += f" and uploaded to OpenAI with file ID: {openai_file_info['file_id']}"
         else:
-            # Fallback to local file information
-            result["openai_format"] = {
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"DOM content ({content_type}) has been saved as a local file attachment. File path: {temp_file_path}"
-                    },
-                    {
-                        "type": "file",
-                        "file_path": temp_file_path
-                    }
-                ]
-            }
-            result["message"] += " (OpenAI upload failed - using local file)"
+            # Fallback: return local file info if OpenAI upload fails
+            result = None
         
         return result
         
     except Exception as e:
         logger.error(f"Error saving content as file attachment: {e}")
-        return {
-            "type": "error",
-            "message": f"Failed to save content as file attachment: {str(e)}",
-            "original_content": content
-        }
+        return None
 
